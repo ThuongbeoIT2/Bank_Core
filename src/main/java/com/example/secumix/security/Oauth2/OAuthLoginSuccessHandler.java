@@ -17,7 +17,7 @@ import java.io.IOException;
 public class OAuthLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
 	@Autowired
-			@Lazy
+	@Lazy
 	UserService userService;
 	
 	@Override

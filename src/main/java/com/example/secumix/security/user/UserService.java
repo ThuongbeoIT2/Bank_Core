@@ -24,7 +24,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
-
+    /* Đổi mật khẩu*/
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -44,10 +44,12 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
+    /* Tìm kiếm người dùng theo email */
     public Optional<User> FindByEmail(@Param("email") String email) {
         Optional<User> result = repository.findByEmail(email.trim().toLowerCase());
         return result;
     }
+    /* Lưu người dùng*/
     public void SaveUser (User user){
        Optional<User> result = repository.findByEmail(user.getEmail());
        if (result.isPresent()){
@@ -59,7 +61,7 @@ public class UserService {
            repository.save(user);
        }
     }
-
+    /* Cập nhận kiểu đăng ký phân quyền*/
     public void updateAuthenticationType(String username, String oauth2ClientName) {
         AuthenticationType authType = AuthenticationType.valueOf(oauth2ClientName.toUpperCase());
         System.out.println("Updated user's authentication type to " + authType +" and email :"+ username);

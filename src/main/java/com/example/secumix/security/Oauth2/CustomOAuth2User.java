@@ -23,7 +23,7 @@ public class CustomOAuth2User implements OAuth2User {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return oauth2User.getAuthorities();
 	}
-
+    /* Lấy ra Email từ tài khoản Oauth*/
 	@Override
 	public String getName() {
 		System.out.println(oauth2User.<String>getAttribute("email"));
@@ -33,7 +33,7 @@ public class CustomOAuth2User implements OAuth2User {
 	public String getEmail() {
 		return oauth2User.<String>getAttribute("email");		
 	}
-
+	/* Lấy ra ClientName*/
 	public String getOauth2ClientName() {
 		return this.oauth2ClientName;
 	}

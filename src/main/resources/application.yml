@@ -68,3 +68,6 @@ application:
       refresh-token:
         expiration: 604800000
 
+springdoc:
+  api-docs:
+    path: /api-docs

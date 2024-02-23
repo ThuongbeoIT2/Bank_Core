@@ -4,7 +4,7 @@ import com.example.secumix.security.Oauth2.CustomOAuth2UserService;
 import com.example.secumix.security.Oauth2.OAuthLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -14,15 +14,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import reactor.core.publisher.Mono;
 
 import static com.example.secumix.security.user.Permission.*;
 import static com.example.secumix.security.user.Role.*;
@@ -35,10 +30,23 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String[] WHITE_LIST_URL = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**",
-            "/swagger-resources", "/configuration/ui", "/configuration/security"
-
-            , "/webjars/**","/api/v1/auth/registrationConfirm.html" ,"/login/oauth2/code/google","/login/oauth2/code/facebook"};
+    private static final String[] WHITE_LIST_URL =
+            {       "/api-docs",
+                    "/api/v1/auth/**",
+                    "/v2/api-docs",
+                    "/v3/api-docs",
+                    "/v3/api-docs/**",
+                    "/swagger-resources",
+                    "/swagger-resources/**",
+                    "/configuration/ui",
+                    "/configuration/security",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/webjars/**",
+                    "/api/v1/auth/registrationConfirm.html" ,
+                    "/login/oauth2/code/google",
+                    "/login/oauth2/code/facebook"
+            };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
