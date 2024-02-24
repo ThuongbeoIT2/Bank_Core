@@ -22,15 +22,26 @@ public class TransactionalService implements ITranTypeService{
     }
 
     @Override
+    public void Insert(TransactionalTypeRequest transactionalTypeRequest) {
+        TransactionalType Obj=new TransactionalType();
+                Obj.setTypeName(transactionalTypeRequest.getTypeName());
+                Obj.setDescription(transactionalTypeRequest.getDescription());
+
+        tranTypeRepository.save(Obj);
+
+    }
+
+    @Override
     public void Save(TransactionalType transactionalType) {
         tranTypeRepository.save(transactionalType);
     }
 
-    /* Chỉ cập nhận Description */
+
     @Override
     public void UpdateTransactionalType(TransactionalTypeRequest transactionalTypeRequest) {
        Optional<TransactionalType>  rs=   tranTypeRepository.findTypeByName(transactionalTypeRequest.getTypeName());
             rs.get().setDescription(transactionalTypeRequest.getDescription());
+            rs.get().setTypeName(transactionalTypeRequest.getTypeName());
             tranTypeRepository.save(rs.get());
     }
 }

@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface ITranTypeService {
     Optional<TransactionalType> findTypeByName(@Param("typename") String typename);
     List<TransactionalType> getAllTranType();
+    void Insert(TransactionalTypeRequest transactionalTypeRequest);
     void Save(TransactionalType transactionalType);
     void UpdateTransactionalType(TransactionalTypeRequest transactionalTypeRequest);
 }

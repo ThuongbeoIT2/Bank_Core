@@ -3,10 +3,7 @@ package com.example.secumix.security.card.BankCard;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.util.Base64;
 
 @Service
@@ -22,14 +19,13 @@ public class BankCardEncryptionService {
 
     // Phương thức này tạo một cặp khóa RSA (public key và private key)
     private KeyPair generateKeyPair() throws Exception {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-        generator.initialize(2048);
-//        PublicKey publicKey = keyPair.getPublic();
-//        PrivateKey privateKey = keyPair.getPrivate();
-//
-//        System.out.println("Public Key: " + publicKey);
-//        System.out.println("Private Key: " + privateKey);
-        return generator.generateKeyPair();
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048, new SecureRandom());
+            return keyPairGenerator.generateKeyPair();
+        } catch (GeneralSecurityException e) {
+            throw new AssertionError(e);
+        }
     }
 
     // Phương thức này sử dụng public key để mã hóa dữ liệu

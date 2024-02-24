@@ -6,7 +6,6 @@ import javax.validation.constraints.Pattern;
 
 @Data
 public class TransactionalTypeRequest {
-
     @Pattern(regexp = "[a-zA-Z\\s]+", message = "Transaction type name should only contain letters and spaces")
     private String TypeName;
 

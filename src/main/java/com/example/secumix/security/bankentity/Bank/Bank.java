@@ -23,7 +23,7 @@ public class Bank implements BankBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int BankID;
 
-    @Pattern(regexp = "^[a-zA-Z]{2}$", message = "Represent field is only allowed to contain letters and must have exactly 2 characters.")
+    @Pattern(regexp = "^[a-zA-Z]{2,8}$", message = "Represent field is only allowed to contain letters and must have exactly 2 characters.")
     @Column(nullable = false, unique = true)
     private String Represent;
 
@@ -31,7 +31,7 @@ public class Bank implements BankBase {
     @Size(max = 30, message = "The BankName field must not exceed 30 characters")
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "The BankName field must not contain special characters.")
     private String BankName;
-    @NotNull
+
     private String Logo;
     private Date CreatedAt;
     private Date UpdatedAt;

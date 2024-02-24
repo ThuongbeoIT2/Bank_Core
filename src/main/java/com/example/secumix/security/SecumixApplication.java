@@ -9,6 +9,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.security.GeneralSecurityException;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
+
 
 @SpringBootApplication
 
@@ -26,19 +30,6 @@ public class SecumixApplication implements CommandLineRunner {
     }
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Runnnnn");
-        BankCard bankCard = new BankCard();
-        bankCard.setBankCardID(123);
-        bankCard.setCode("1234567890123456");
-        bankCard.setCustomerName("John Doe");
-        bankCard.setPinCode("123456");
-        bankCard.setSurplus(1000L);
-        bankCard.setCardStatus(true);
-        bankCard.setCreatedAt(UserUtils.getCurrentDay());
-        bankCard.setUpdatedAt(UserUtils.getCurrentDay());
-        String encryptedData = bankCardEncryptionService.encryptBankCard(bankCard);
-        System.out.println(encryptedData);
-        BankCard decryptedBankCard = bankCardEncryptionService.decryptBankCard(encryptedData);
-        System.out.println(decryptedBankCard);
+        System.out.println("Runnnn...");
     }
 }

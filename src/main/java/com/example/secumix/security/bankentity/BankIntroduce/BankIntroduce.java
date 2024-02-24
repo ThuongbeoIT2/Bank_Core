@@ -6,8 +6,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
-@Table
+@Entity(name = "bankintroduce")
+@Table(name = "bankintroduce")
 @Getter
 @Setter
 @Builder
