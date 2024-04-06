@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 @Data
-public class BankRequest {
+public class BankRequest_Response {
     @Pattern(regexp = "^[a-zA-Z]{2}$", message = "Represent field is only allowed to contain letters and must have exactly 2 characters.")
     @Column(nullable = false, unique = true)
     private String Represent;

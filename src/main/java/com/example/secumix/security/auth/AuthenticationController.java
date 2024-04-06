@@ -31,7 +31,6 @@ public class AuthenticationController {
   public ResponseEntity<ResponseObject> oauth2LoginCallback(
           @PathVariable String clientRegistrationId,
           @AuthenticationPrincipal OAuth2User oauth2User) {
-    // Xử lý thông tin người dùng từ oauth2User và trả về dữ liệu JSON
     User userInfo = new User();
     userInfo.setEmail(oauth2User.getAttribute("name"));
     userInfo.setEmail(oauth2User.getAttribute("email"));
@@ -54,11 +53,8 @@ public class AuthenticationController {
               new ResponseObject("OK","Register success!",service.register(request))
       );
     } catch (UserAlreadyExistsException e) {
-
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
               .body(new ResponseObject("FAILED", "User with email " + request.getEmail() + " already exists.",""));
-
-
     }
 
   }

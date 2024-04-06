@@ -68,6 +68,9 @@ public class UserService {
         repository.updateAuthenticationType(username,authType);
 
     }
+    public User findById(int userID){
+        return repository.findById(userID).get();
+    }
 
 }
 

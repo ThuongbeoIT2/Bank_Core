@@ -45,10 +45,6 @@ public class User implements UserDetails {
   @Column(name = "online_status")
   private boolean onlineStatus=false;
 
-  @Column(name = "last_logout_time")
-  private Long lastLogoutTime;
-
-
   @OneToMany(mappedBy = "user")
   private List<Notify> notifies;
   @OneToMany(mappedBy = "user")

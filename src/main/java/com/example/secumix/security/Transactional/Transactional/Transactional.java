@@ -2,14 +2,12 @@ package com.example.secumix.security.Transactional.Transactional;
 
 import com.example.secumix.security.Transactional.TransactionalType.TransactionalType;
 import com.example.secumix.security.Utils.UserUtils;
-import com.example.secumix.security.bankentity.BankBranch.BankBranch;
+import com.example.secumix.security.card.BankCard.BankCard;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.databind.DatabindException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -42,6 +40,17 @@ public class Transactional {
     private String BankB;
     private String Description;
     private Date CreatedAt;
+    public Transactional(BankCard bankCardA,BankCard bankCardB,long amount,String message){
+        this.BankA=bankCardA.getBankBranch().getBank().getBankName();
+        this.BankB=bankCardB.getBankBranch().getBank().getBankName();
+        bankCardA.setSurplus(bankCardA.getSurplus()-amount);
+        bankCardB.setSurplus(bankCardB.getSurplus()+amount);
+        this.CodeA=bankCardA.getCode();
+        this.CodeB=bankCardB.getCode();
+        this.Amount=amount;
+        this.Description=message;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "TranTypeID",foreignKey = @ForeignKey(name = "fk_tupe_Transactional"))

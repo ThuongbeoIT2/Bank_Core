@@ -1,8 +1,10 @@
 package com.example.secumix.security.bankentity.Bank;
 
 import com.example.secumix.security.EBanking.Ebanking;
+import com.example.secumix.security.bankentity.ATMBank.ATMBank;
 import com.example.secumix.security.bankentity.BankBranch.BankBranch;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,21 +23,22 @@ public class Bank implements BankBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SerializedName("bankID")
     private int BankID;
 
     @Pattern(regexp = "^[a-zA-Z]{2,8}$", message = "Represent field is only allowed to contain letters and must have exactly 2 characters.")
     @Column(nullable = false, unique = true)
+    @SerializedName("represent")
     private String Represent;
 
     @NotBlank(message = "BankName is not blank")
     @Size(max = 30, message = "The BankName field must not exceed 30 characters")
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "The BankName field must not contain special characters.")
+    @SerializedName("bankName")
     private String BankName;
-
+    @SerializedName("logo")
     private String Logo;
-    private Date CreatedAt;
-    private Date UpdatedAt;
-    private Date DeletedAt;
+
 
     @OneToMany(mappedBy = "bank")
     @JsonManagedReference
@@ -43,6 +46,9 @@ public class Bank implements BankBase {
     @OneToMany(mappedBy = "bank")
     @JsonManagedReference
     private List<Ebanking> ebankings;
+    @OneToMany(mappedBy = "bank")
+    @JsonManagedReference
+    private List<ATMBank> atmBanks;
     @Override
     public String getName(Bank bank) {
         return bank.BankName;

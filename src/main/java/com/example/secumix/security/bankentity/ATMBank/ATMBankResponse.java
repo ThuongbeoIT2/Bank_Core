@@ -1,11 +1,13 @@
 package com.example.secumix.security.bankentity.ATMBank;
 
-import lombok.Data;
+import com.google.gson.annotations.SerializedName;
 
-@Data
-public class ATMBankRequest {
+public class ATMBankResponse {
+    @SerializedName("ATMCode")
+    private String ATMCode;
     private String Province;
     private String District;
     private String Ward;
     private int BankID;
+
 }

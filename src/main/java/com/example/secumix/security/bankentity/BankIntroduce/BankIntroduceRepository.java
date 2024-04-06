@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface BankIntroduceRepository extends JpaRepository<BankIntroduce,Integer> {
     @Query("select o from bankintroduce o where o.bank.BankID=:bankID")
-    Optional<BankIntroduce> findBankIntroduceByBankID(int bankID);
+   BankIntroduce findBankIntroduceByBankID(int bankID);
 }

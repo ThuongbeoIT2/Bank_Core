@@ -30,8 +30,8 @@ public class Ebanking {
     private String PhoneID;
     @Column(nullable = false)
     private String Password;
-    private Date CreatedAt;
-    private Date UpdatedAt;
+    @Column(nullable = false)
+    private String OTP;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "BankID",foreignKey = @ForeignKey(name = "fk_Bank_Ebanking"))

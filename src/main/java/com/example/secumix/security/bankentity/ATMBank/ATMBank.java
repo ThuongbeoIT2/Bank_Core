@@ -3,10 +3,14 @@ package com.example.secumix.security.bankentity.ATMBank;
 
 import com.example.secumix.security.Utils.UserUtils;
 import com.example.secumix.security.bankentity.Bank.Bank;
-import com.example.secumix.security.bankentity.BankBranch.BankBranch;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import javax.persistence.*;
@@ -15,10 +19,15 @@ import java.util.Date;
 @Entity(name = "atmbank")
 @Table(name = "atmbank")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ATMBank {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SerializedName("ATMID")
     private int ATMID;
+    @SerializedName("ATMCode")
     private String ATMCode;
     private String Province;
     private String District;
@@ -29,12 +38,14 @@ public class ATMBank {
     @JsonBackReference
     @JoinColumn(name = "bankID",foreignKey = @ForeignKey(name = "fk_bank_atm"))
     private Bank bank;
-    public String AddressBankBranch(ATMBank atmBank){
-        String Address = atmBank.getWard()+", " +atmBank.getDistrict()+", "+atmBank.getProvince();
+    public String AddressBankBranch(){
+        String Address = this.getWard()+", " +this.getDistrict()+", "+this.getProvince();
         return Address;
     }
-    public void setBankCode(ATMBank atmBank){
-        String atmcode = atmBank.bank.getRepresent().concat(UserUtils.generateTempPwd(6));
-        atmBank.ATMCode = atmcode;
+
+    public void setATMCode(){
+        String atmcode = this.bank.getRepresent().concat(UserUtils.generateTempPwd(6));
+        this.ATMCode = atmcode;
+
     }
 }

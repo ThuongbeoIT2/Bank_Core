@@ -45,4 +45,5 @@ public class UserUtils {
         Date currentDate = new Date();
         return new Date(currentDate.getTime());
     }
+
 }

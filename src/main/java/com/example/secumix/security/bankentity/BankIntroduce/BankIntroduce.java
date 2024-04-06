@@ -23,8 +23,6 @@ public class BankIntroduce {
     private String AvatarIntroduce;
     @Column(nullable = false)
     private String Description;
-    private Date CreatedAt;
-    private Date UpdatedAt;
     @OneToOne
     @JoinColumn(name = "BankID",foreignKey = @ForeignKey(name = "fk_Bank_Introduce"))
     private Bank bank;

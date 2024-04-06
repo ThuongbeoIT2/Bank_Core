@@ -1,16 +1,16 @@
 package com.example.secumix.security;
 
-public class ResponseObject {
-    private String status;
-    private String message;
-    private Object data;
-    public ResponseObject() {}
+import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 
-    public ResponseObject(String status, String message, Object data) {
-        this.status = status;
-        this.message = message;
-        this.data = data;
-    }
+@Data
+public class ResponseObject {
+    @SerializedName("status")
+    private String status;
+    @SerializedName("message")
+    private String message;
+    @SerializedName("data")
+    private Object data;
 
     public String getStatus() {
         return status;
@@ -33,6 +33,12 @@ public class ResponseObject {
     }
 
     public void setData(Object data) {
+        this.data = data;
+    }
+
+    public ResponseObject(String status, String message, Object data) {
+        this.status = status;
+        this.message = message;
         this.data = data;
     }
 }

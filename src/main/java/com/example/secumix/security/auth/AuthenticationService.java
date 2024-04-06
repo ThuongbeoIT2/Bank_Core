@@ -1,6 +1,8 @@
 package com.example.secumix.security.auth;
 
 import HaNoi.QA.libPersonal.EmailMix;
+import com.example.secumix.security.EBanking.EBankingRepository;
+import com.example.secumix.security.EBanking.Ebanking;
 import com.example.secumix.security.Utils.UserUtils;
 import com.example.secumix.security.config.JwtService;
 import com.example.secumix.security.notify.Notify;
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,6 +42,8 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
   private final ProfileDetailRepository profileDetailRepository;
+  @Autowired
+  private EBankingRepository eBankingRepository;
   private final NotifyRepository notifyRepository;
   public  Optional<Token> getVerificationToken(String token) {
     Optional<Token> result= tokenRepository.findByToken(token);
@@ -54,11 +59,11 @@ public class AuthenticationService {
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(Role.USER)
-            .lastLogoutTime(UserUtils.getCurrentDay().getTime())
             .enabled(false)
             .authType(AuthenticationType.DATABASE)
         .build();
     var savedUser = repository.save(user);
+
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
@@ -75,7 +80,6 @@ public class AuthenticationService {
                     "Your account has been initialized. Welcome to our service!")
             .notiStatus(false)   //Chưa xem
             .deletedNoti(false)  //Chưa xóa
-            .createdAt(UserUtils.getCurrentDay())
             .user(savedUser)
             .build();
     notifyRepository.save(notify);
@@ -94,6 +98,22 @@ public class AuthenticationService {
     //Nếu thành công ridirect https://mail.google.com/mail/u/0/#sent
   }
 
+  public AuthenticationResponse loginEbanking(String phone, String password) {
+    Ebanking ebanking = eBankingRepository.findbyPhoneNumber(phone).get();
+    int userID= ebanking.getUserID();
+    User user = repository.findById(userID).get();
+    String email = user.getEmail();
+    var userlogin = repository.findByEmail(email)
+            .orElseThrow();
+    var jwtToken = jwtService.generateToken(user);
+    var refreshToken = jwtService.generateRefreshToken(user);
+    revokeAllUserTokens(userlogin);
+    saveUserToken(userlogin, jwtToken);
+    return AuthenticationResponse.builder()
+            .accessToken(jwtToken)
+            .refreshToken(refreshToken)
+            .build();
+  }
   public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
@@ -107,8 +127,10 @@ public class AuthenticationService {
     repository.save(user);
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
+
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
+
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
             .refreshToken(refreshToken)

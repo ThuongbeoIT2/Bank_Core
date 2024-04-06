@@ -45,7 +45,9 @@ public class SecurityConfiguration {
                     "/webjars/**",
                     "/api/v1/auth/registrationConfirm.html" ,
                     "/login/oauth2/code/google",
-                    "/login/oauth2/code/facebook"
+                    "/login/oauth2/code/facebook",
+                    "/api/v1/auth/bank",
+                    "/api/v1/auth/bank/{Represent}"
             };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -73,11 +75,11 @@ public class SecurityConfiguration {
                         .antMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(),
                                 MANAGER_DELETE.name())
                         .anyRequest().authenticated())
-               .oauth2Login()
+                .oauth2Login()
                 .userInfoEndpoint()
-					.userService(oauth2UserService)
-				.and()
-				.successHandler(oauthLoginSuccessHandler)
+                .userService(oauth2UserService)
+                .and()
+                .successHandler(oauthLoginSuccessHandler)
                 .and()
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -101,36 +103,3 @@ public class SecurityConfiguration {
 
 
 
-
-
-
-//    public class OAuth2Config {
-//        public static ClientRegistration facebookClientRegistration() {
-//
-//            var clientRegistration=ClientRegistration.withRegistrationId("facebook")
-//                    .clientId("CLIENT_ID")
-//                    .clientSecret("511c1cce66db75b519fc74752441d7e0")
-//                    .redirectUri("http://localhost:9000/login/oauth2/facebook")
-//                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//                    .authorizationUri("http://localhost:9000/api/v1/auth/facebook")
-//                    .tokenUri("https://graph.facebook.com/v12.0/oauth/access_token")
-//                    .userInfoUri("https://graph.facebook.com/v12.0/me")
-//                    .userNameAttributeName("id")  // You can adjust this based on the Facebook Graph API response
-//                    .clientName("Facebook")
-//                    .build();
-//            System.out.println( clientRegistration.toString());
-//            try {
-//                return clientRegistration;
-//
-//            } catch (Exception e) {
-//                // Handle the exception appropriately (e.g., log it or throw a custom exception)
-//                e.printStackTrace();
-//                throw new RuntimeException("Error creating Facebook ClientRegistration", e);
-//            }
-//        }
-//
-//        @Bean
-//        public InMemoryReactiveClientRegistrationRepository inMemoryReactiveClientRegistrationRepository() {
-//            return new InMemoryReactiveClientRegistrationRepository(OAuth2Config.facebookClientRegistration());
-//        }
-//    }

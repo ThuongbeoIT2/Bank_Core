@@ -27,8 +27,6 @@ public class Notify {
     private boolean notiStatus;
     @Column(name = "deletedNoti")
     private boolean deletedNoti;
-    @Column(name = "createdAt")
-    private Date createdAt;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userID",foreignKey = @ForeignKey(name = "fk_user_notify"))
     private User user;

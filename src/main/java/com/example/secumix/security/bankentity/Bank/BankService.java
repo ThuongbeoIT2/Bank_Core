@@ -1,34 +1,49 @@
 package com.example.secumix.security.bankentity.Bank;
 
-import com.example.secumix.security.Utils.UserUtils;
-
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class BankService implements IBankService{
     @Autowired
     private BankRepository repository;
+
+    private ModelMapper modelMapper = new ModelMapper();
     @Override
-    public List<Bank> getAllBank() {
-        return repository.findAll();
+    public List<BankRequest_Response> getAllBank() {
+        return repository.findAll().stream().map(bank -> {
+            BankRequest_Response bankRequestResponse=modelMapper.map(bank,BankRequest_Response.class);
+            return bankRequestResponse;
+        }).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Bank> findBankByBankID(int bankID) {
-        return repository.findById(bankID);
+    public Optional<BankRequest_Response> findBankByBankID(int bankID) {
+        return repository.findById(bankID).map(bank -> {
+            BankRequest_Response bankRequestResponse = modelMapper.map(bank,BankRequest_Response.class);
+            return bankRequestResponse;
+        });
     }
 
     @Override
-    public Optional<Bank> findBankByName(String BankName) {
-        return repository.findBankByName(BankName);
+    public Optional<BankRequest_Response> findBankByName(String BankName) {
+        return repository.findBankByName(BankName).map(bank -> {
+            BankRequest_Response bankRequestResponse = modelMapper.map(bank,BankRequest_Response.class);
+            return bankRequestResponse;
+        });
     }
 
     @Override
-    public Optional<Bank> findBankByRepresent(String Represent) {
-        return repository.findBankByRepresent(Represent);
+    public Optional<BankRequest_Response> findBankByRepresent(String Represent) {
+        return repository.findBankByRepresent(Represent).map(bank -> {
+            BankRequest_Response bankRequestResponse = modelMapper.map(bank,BankRequest_Response.class);
+            return bankRequestResponse;
+        });
     }
 
     @Override
@@ -37,24 +52,23 @@ public class BankService implements IBankService{
     }
 
     @Override
-    public void Insert(BankRequest bankRequest) {
+    public void Insert(BankRequest_Response bankRequest) {
 
         var newObj=Bank.builder()
                 .Represent(bankRequest.getRepresent())
                 .BankName(bankRequest.getBankName())
                 .Logo(bankRequest.getLogo())
-                .CreatedAt(UserUtils.getCurrentDay())
-                .UpdatedAt(UserUtils.getCurrentDay())
+
                 .build();
         repository.save(newObj);
     }
 
     @Override
-    public void Update(BankRequest bankRequest,int id) {
+    public void Update(BankRequest_Response bankRequest, int id) {
         Optional<Bank> bank= repository.findById(id);
         bank.get().setBankName(bankRequest.getBankName());
         bank.get().setRepresent(bankRequest.getRepresent());
-        bank.get().setUpdatedAt(UserUtils.getCurrentDay());
+//
         repository.save(bank.get());
     }
 }
