@@ -14,7 +14,7 @@ spring:
 
   # datasource
   datasource:
-    url: jdbc:mysql://localhost:3306/secumix
+    url: jdbc:mysql://localhost:3306/store
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -71,3 +71,4 @@ application:
 springdoc:
   api-docs:
     path: /api-docs
+default_avt: "https://res.cloudinary.com/dqvr7kat6/image/upload/v1712428988/z9fgzziw6xy1vpkg1x1p.jpg"

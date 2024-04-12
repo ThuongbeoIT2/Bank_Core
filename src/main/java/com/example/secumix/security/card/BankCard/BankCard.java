@@ -46,4 +46,5 @@ public class BankCard {
     @JsonBackReference
     @JoinColumn(name = "BankBranchID",foreignKey = @ForeignKey(name = "fk_Branch_Card"))
     private BankBranch bankBranch;
+
 }

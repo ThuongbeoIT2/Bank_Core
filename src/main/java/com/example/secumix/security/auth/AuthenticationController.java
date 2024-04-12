@@ -39,7 +39,7 @@ public class AuthenticationController {
             new ResponseObject("OK","Login successly",userInfo)
     );
   }
-  @PostMapping("/register")
+  @PostMapping("/register/user")
   public ResponseEntity<ResponseObject> register(
           @RequestBody RegisterRequest request
   ) {
@@ -50,7 +50,45 @@ public class AuthenticationController {
               });
 
       return  ResponseEntity.status(HttpStatus.OK).body(
-              new ResponseObject("OK","Register success!",service.register(request))
+              new ResponseObject("OK","Register success!",service.registerUser(request))
+      );
+    } catch (UserAlreadyExistsException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+              .body(new ResponseObject("FAILED", "User with email " + request.getEmail() + " already exists.",""));
+    }
+
+  }
+  @PostMapping("/register/shipper")
+  public ResponseEntity<ResponseObject> registerShipper(
+          @RequestBody RegisterRequest request
+  ) {
+    try {
+      userService.FindByEmail(request.getEmail())
+              .ifPresent(existingUser -> {
+                throw new UserAlreadyExistsException("User with email " + request.getEmail() + " already exists.");
+              });
+
+      return  ResponseEntity.status(HttpStatus.OK).body(
+              new ResponseObject("OK","Register success!",service.registerShipper(request))
+      );
+    } catch (UserAlreadyExistsException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+              .body(new ResponseObject("FAILED", "User with email " + request.getEmail() + " already exists.",""));
+    }
+
+  }
+  @PostMapping("/register/managerstore")
+  public ResponseEntity<ResponseObject> registerManager(
+          @RequestBody RegisterRequest request
+  ) {
+    try {
+      userService.FindByEmail(request.getEmail())
+              .ifPresent(existingUser -> {
+                throw new UserAlreadyExistsException("User with email " + request.getEmail() + " already exists.");
+              });
+
+      return  ResponseEntity.status(HttpStatus.OK).body(
+              new ResponseObject("OK","Register success!",service.registerManager(request))
       );
     } catch (UserAlreadyExistsException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -84,7 +122,7 @@ public class AuthenticationController {
   }
   @PostMapping("/authenticate")
   public ResponseEntity<ResponseObject> authenticate(
-      @RequestBody AuthenticationRequest request
+          @RequestBody AuthenticationRequest request
   ) {
     Optional<User> user = userService.FindByEmail(request.getEmail());
     if (user.isPresent()){
@@ -105,8 +143,8 @@ public class AuthenticationController {
 
   @PostMapping("/refresh-token")
   public void refreshToken(
-      HttpServletRequest request,
-      HttpServletResponse response
+          HttpServletRequest request,
+          HttpServletResponse response
   ) throws IOException {
     service.refreshToken(request, response);
   }

@@ -18,8 +18,7 @@ import java.security.SecureRandom;
 
 public class SecumixApplication implements CommandLineRunner {
 
-    @Autowired
-    private BankCardEncryptionService bankCardEncryptionService;
+
 
 
     public static void main(String[] args) {

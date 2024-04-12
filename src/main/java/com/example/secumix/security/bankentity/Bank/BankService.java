@@ -58,7 +58,6 @@ public class BankService implements IBankService{
                 .Represent(bankRequest.getRepresent())
                 .BankName(bankRequest.getBankName())
                 .Logo(bankRequest.getLogo())
-
                 .build();
         repository.save(newObj);
     }

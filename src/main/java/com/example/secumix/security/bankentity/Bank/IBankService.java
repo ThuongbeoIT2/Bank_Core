@@ -11,4 +11,5 @@ public interface IBankService {
     void Save(Bank bank);
     void Insert(BankRequest_Response bankRequest);
     void Update(BankRequest_Response bankRequest, int id);
+
 }

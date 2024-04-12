@@ -198,7 +198,7 @@ public class BankController {
 
     }
     @PostMapping(value = "/{bankrepresent}/insertbankbranch")
-    ResponseEntity<ResponseObject> InsertBankBanch(@PathVariable String bankrepresent,
+    ResponseEntity<String> InsertBankBanch(@PathVariable String bankrepresent,
                                                    @RequestParam String BankBranchName,
                                                     @RequestParam String Provine,
                                                    @RequestParam String District,
@@ -213,13 +213,9 @@ public class BankController {
             bankBranchRequest.setBankBranchName(BankBranchName.trim().toUpperCase());
 
             bankBranchService.Insert(bankBranchRequest);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    new ResponseObject("OK","Insert BankBranch successlly","")
-            );
+            return ResponseEntity.status(HttpStatus.OK).body("Insert BankBranch successlly");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("OK","Not found","")
-            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found");
         }
     }
 }

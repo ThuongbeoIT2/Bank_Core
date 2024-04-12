@@ -38,8 +38,7 @@ public class Bank implements BankBase {
     private String BankName;
     @SerializedName("logo")
     private String Logo;
-
-
+    
     @OneToMany(mappedBy = "bank")
     @JsonManagedReference
     private List<BankBranch> bankBranches;

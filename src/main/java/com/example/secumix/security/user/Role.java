@@ -35,9 +35,15 @@ public enum Role {
                   MANAGER_DELETE,
                   MANAGER_CREATE
           )
-  )
+  ),
 
-  ;
+    SHIPPER(
+            Set.of(
+                    SHIPPER_READ,
+                    SHIPPER_UPDATE,
+                    SHIPPER_DELETE,
+                    SHIPPER_CREATE
+    ));
 
   @Getter
   private final Set<Permission> permissions;

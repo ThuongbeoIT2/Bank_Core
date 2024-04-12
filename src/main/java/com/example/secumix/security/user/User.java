@@ -20,7 +20,6 @@ import java.util.List;
 
 @Data
 @Builder
-
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
@@ -52,6 +51,9 @@ public class User implements UserDetails {
 
   public User() {
 
+  }
+
+  public User(String firstname, String lastname, String email, String password, AuthenticationType authType, Role role, boolean enabled, boolean onlineStatus) {
   }
 
   @Override

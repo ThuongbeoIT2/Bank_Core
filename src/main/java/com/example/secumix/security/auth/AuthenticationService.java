@@ -1,12 +1,14 @@
 package com.example.secumix.security.auth;
 
+
+
 import HaNoi.QA.libPersonal.EmailMix;
-import com.example.secumix.security.EBanking.EBankingRepository;
-import com.example.secumix.security.EBanking.Ebanking;
 import com.example.secumix.security.Utils.UserUtils;
 import com.example.secumix.security.config.JwtService;
 import com.example.secumix.security.notify.Notify;
 import com.example.secumix.security.notify.NotifyRepository;
+import com.example.secumix.security.store.model.entities.Cart;
+import com.example.secumix.security.store.repository.CartRepo;
 import com.example.secumix.security.token.Token;
 import com.example.secumix.security.token.TokenRepository;
 import com.example.secumix.security.token.TokenType;
@@ -43,7 +45,8 @@ public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
   private final ProfileDetailRepository profileDetailRepository;
   @Autowired
-  private EBankingRepository eBankingRepository;
+  private CartRepo cartRepo;
+
   private final NotifyRepository notifyRepository;
   public  Optional<Token> getVerificationToken(String token) {
     Optional<Token> result= tokenRepository.findByToken(token);
@@ -51,17 +54,112 @@ public class AuthenticationService {
   }
 
 
-  public AuthenticationResponse register(@Valid RegisterRequest request) {
+  public AuthenticationResponse registerUser(@Valid RegisterRequest request) {
 
     var user = User.builder()
-        .firstname(request.getFirstname())
-        .lastname(request.getLastname())
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .role(Role.USER)
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role(Role.USER)
             .enabled(false)
             .authType(AuthenticationType.DATABASE)
-        .build();
+            .build();
+    var savedUser = repository.save(user);
+
+    var jwtToken = jwtService.generateToken(user);
+    var refreshToken = jwtService.generateRefreshToken(user);
+    saveUserToken(savedUser, jwtToken);
+    var profileDetail= ProfileDetail.builder()
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .email(request.getEmail())
+            .createdAt(UserUtils.getCurrentDay())
+            .user(user)
+            .build();
+    profileDetailRepository.save(profileDetail);
+    var notify= Notify.builder()
+            .description("\n" +
+                    "Your account has been initialized. Welcome to our service!")
+            .notiStatus(false)   //Chưa xem
+            .deletedNoti(false)  //Chưa xóa
+            .user(savedUser)
+            .build();
+    notifyRepository.save(notify);
+    Cart cart = Cart.builder()
+            .user(user)
+            .build();
+    cartRepo.save(cart);
+    String recipientAddress = request.getEmail();
+    String subject = "Xác nhận tài khoản";
+    String confirmationUrl
+            =   "http://localhost:9000/api/v1/auth/registrationConfirm.html?token=" + jwtToken;
+    String message = "Tài khoản được khởi tạo từ DuyThuong. Tên tài khoản email : " +  recipientAddress + " .Nhấp vào liên kết sau để xác nhận đăng ký tài khoản:\n" + confirmationUrl;
+
+    EmailMix e = new EmailMix("thuong0205966@huce.edu.vn", "crognmvpbikkgogj",0);
+    e.sendContentToVer2(recipientAddress,subject,message);
+    return AuthenticationResponse.builder()
+            .accessToken(jwtToken)
+            .refreshToken(refreshToken)
+            .build();
+    //Nếu thành công ridirect https://mail.google.com/mail/u/0/#sent
+  }
+  public AuthenticationResponse registerShipper(@Valid RegisterRequest request) {
+
+    var user = User.builder()
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role(Role.SHIPPER)
+            .enabled(false)
+            .authType(AuthenticationType.DATABASE)
+            .build();
+    var savedUser = repository.save(user);
+    var jwtToken = jwtService.generateToken(user);
+    var refreshToken = jwtService.generateRefreshToken(user);
+    saveUserToken(savedUser, jwtToken);
+    var profileDetail= ProfileDetail.builder()
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .email(request.getEmail())
+            .createdAt(UserUtils.getCurrentDay())
+            .user(user)
+            .build();
+    profileDetailRepository.save(profileDetail);
+    var notify= Notify.builder()
+            .description("\n" +
+                    "Your account has been initialized. Welcome to our service!")
+            .notiStatus(false)   //Chưa xem
+            .deletedNoti(false)  //Chưa xóa
+            .user(savedUser)
+            .build();
+    notifyRepository.save(notify);
+    String recipientAddress = request.getEmail();
+    String subject = "Xác nhận tài khoản";
+    String confirmationUrl
+            =   "http://localhost:9000/api/v1/auth/registrationConfirm.html?token=" + jwtToken;
+    String message = "Tài khoản được khởi tạo từ DuyThuong. Tên tài khoản email : " +  recipientAddress + " .Nhấp vào liên kết sau để xác nhận đăng ký tài khoản:\n" + confirmationUrl;
+
+    EmailMix e = new EmailMix("thuong0205966@huce.edu.vn", "crognmvpbikkgogj",0);
+    e.sendContentToVer2(recipientAddress,subject,message);
+    return AuthenticationResponse.builder()
+            .accessToken(jwtToken)
+            .refreshToken(refreshToken)
+            .build();
+    //Nếu thành công ridirect https://mail.google.com/mail/u/0/#sent
+  }
+  public AuthenticationResponse registerManager(@Valid RegisterRequest request) {
+
+    var user = User.builder()
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role(Role.MANAGER)
+            .enabled(false)
+            .authType(AuthenticationType.DATABASE)
+            .build();
     var savedUser = repository.save(user);
 
     var jwtToken = jwtService.generateToken(user);
@@ -94,35 +192,20 @@ public class AuthenticationService {
     return AuthenticationResponse.builder()
             .accessToken(jwtToken)
             .refreshToken(refreshToken)
-        .build();
+            .build();
     //Nếu thành công ridirect https://mail.google.com/mail/u/0/#sent
   }
 
-  public AuthenticationResponse loginEbanking(String phone, String password) {
-    Ebanking ebanking = eBankingRepository.findbyPhoneNumber(phone).get();
-    int userID= ebanking.getUserID();
-    User user = repository.findById(userID).get();
-    String email = user.getEmail();
-    var userlogin = repository.findByEmail(email)
-            .orElseThrow();
-    var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
-    revokeAllUserTokens(userlogin);
-    saveUserToken(userlogin, jwtToken);
-    return AuthenticationResponse.builder()
-            .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-            .build();
-  }
+
   public AuthenticationResponse authenticate(@NotNull AuthenticationRequest request) {
     authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
-        )
+            new UsernamePasswordAuthenticationToken(
+                    request.getEmail(),
+                    request.getPassword()
+            )
     );
     var user = repository.findByEmail(request.getEmail())
-        .orElseThrow();
+            .orElseThrow();
     user.setOnlineStatus(true);
     repository.save(user);
     var jwtToken = jwtService.generateToken(user);
@@ -132,19 +215,19 @@ public class AuthenticationService {
     saveUserToken(user, jwtToken);
 
     return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
+            .accessToken(jwtToken)
             .refreshToken(refreshToken)
-        .build();
+            .build();
   }
 
   public void saveUserToken(User user, String jwtToken) {
     var token = Token.builder()
-        .user(user)
-        .token(jwtToken)
-        .tokenType(TokenType.BEARER)
-        .expired(false)
-        .revoked(false)
-        .build();
+            .user(user)
+            .token(jwtToken)
+            .tokenType(TokenType.BEARER)
+            .expired(false)
+            .revoked(false)
+            .build();
     tokenRepository.save(token);
   }
 
