@@ -121,23 +121,18 @@ public class AuthenticationController {
     }
   }
   @PostMapping("/authenticate")
-  public ResponseEntity<ResponseObject> authenticate(
+  public ResponseEntity<AuthenticationResponse> authenticate(
           @RequestBody AuthenticationRequest request
   ) {
     Optional<User> user = userService.FindByEmail(request.getEmail());
     if (user.isPresent()){
       return  user.get().isEnabled() ?
-              ResponseEntity.status(HttpStatus.OK).body(
-                      new ResponseObject("OK", "Authenticate successfully", service.authenticate(request))
+              ResponseEntity.status(HttpStatus.OK).body(service.authenticate(request)
               ) :
-              ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                      new ResponseObject("NOT_IMPLEMENTED", "Your account is not activated. Please check again!", "")
-              );
+              ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
 
     }else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-              new ResponseObject("NOT_FOUND","Account not found for authentication. Please double-check the information.","")
-      );
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
 

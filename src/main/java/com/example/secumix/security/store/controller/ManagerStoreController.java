@@ -9,6 +9,7 @@ import com.example.secumix.security.store.model.entities.Store;
 import com.example.secumix.security.store.model.response.ImportResponse;
 import com.example.secumix.security.store.model.services.IProductService;
 import com.example.secumix.security.store.repository.ImportDetailRepo;
+import com.example.secumix.security.store.repository.OrderDetailRepo;
 import com.example.secumix.security.store.repository.ProductRepo;
 import com.example.secumix.security.store.repository.StoreRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class ManagerStoreController {
     private ImportDetailRepo importDetailRepo;
     @Autowired
     private StoreRepo storeRepo;
+    @Autowired
+    private OrderDetailRepo orderDetailRepo;
     @Autowired
     private ProductRepo productRepo;
     @GetMapping(value = "/getallproduct")
@@ -113,6 +116,13 @@ public class ManagerStoreController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK","Thành công.",importResponses)
         );
+    }
+    @GetMapping(value = "/store/storename/revenue")
+    ResponseEntity<ResponseObject> RevenueByStore(@PathVariable String storename){
+       long  revenue = orderDetailRepo.RevenueByStore(storename);
+       return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
+               "OK","Doanh thu ",revenue
+       ));
     }
 
 }

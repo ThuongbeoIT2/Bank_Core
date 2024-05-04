@@ -11,6 +11,7 @@ public class OrderDetailResponse {
     private String productName;
     private int priceTotal;
     private String orderStatusName;
+    private String address;
     private String productImg;
     private String storeName;
 }

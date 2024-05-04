@@ -1,17 +1,10 @@
 package com.example.secumix.security;
 
 
-import com.example.secumix.security.Utils.UserUtils;
-import com.example.secumix.security.card.BankCard.BankCard;
-import com.example.secumix.security.card.BankCard.BankCardEncryptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.security.GeneralSecurityException;
-import java.security.KeyPairGenerator;
-import java.security.SecureRandom;
 
 
 @SpringBootApplication

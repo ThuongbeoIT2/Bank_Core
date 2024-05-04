@@ -12,6 +12,7 @@ public interface ICartItemService {
     List<CartItemResponse> findByUser();
     Optional<CartItemResponse> finfByProductandUser(int productid);
     void Insert(CartItemRequest cartItemRequest);
+
     void Save(CartItem cartItem);
     Optional<CartItem> findByIdandUser(int cartitemid);
     boolean Delete(int cartitemid);

@@ -22,4 +22,6 @@ public interface IOrderService {
     void InsertIDR(OrderDetailRequest orderDetailRequest);
 
     Optional<OrderDetailResponse> GetInfoOrder(int orderdetailid);
+
+    List<OrderDetailResponse> getOrderDetailByShipperId(int id);
 }

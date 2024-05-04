@@ -12,6 +12,7 @@ import com.example.secumix.security.store.model.services.IOrderService;
 import com.example.secumix.security.store.repository.*;
 import com.example.secumix.security.user.User;
 import com.example.secumix.security.user.UserRepository;
+import com.example.secumix.security.userprofile.ProfileDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,8 @@ public class OrderService implements IOrderService {
     private CartItemRepo cartItemRepo;
     @Autowired
     private PayRepo payRepo;
+    @Autowired
+    private ProfileDetailRepository detailRepository;
     /*
      * Duy Thuong
      * Thống kê cho toàn bộ hệ thống.
@@ -63,6 +66,7 @@ public class OrderService implements IOrderService {
                     orderDetailResponse.setQuantity(orderDetail.getQuantity());
                     orderDetailResponse.setProductImg(product.getAvatarProduct());
                     orderDetailResponse.setPriceTotal(orderDetail.getPriceTotal());
+                    orderDetailResponse.setAddress(detailRepository.findProfileDetailBy(orderDetail.getCart().getUser().getEmail()).get().getAddress());
                     orderDetailResponse.setStoreName(store.getStoreName());
                     return orderDetailResponse;
                 }
@@ -87,6 +91,7 @@ public class OrderService implements IOrderService {
                     orderDetailResponse.setQuantity(orderDetail.getQuantity());
                     orderDetailResponse.setProductImg(product.getAvatarProduct());
                     orderDetailResponse.setPriceTotal(orderDetail.getPriceTotal());
+                    orderDetailResponse.setAddress(detailRepository.findProfileDetailBy(orderDetail.getCart().getUser().getEmail()).get().getAddress());
                     orderDetailResponse.setStoreName(store.getStoreName());
                     return orderDetailResponse;
                 }
@@ -111,6 +116,7 @@ public class OrderService implements IOrderService {
                     orderDetailResponse.setOrderStatusName(orderDetail.getOrderStatus().getOrderStatusName());
                     orderDetailResponse.setQuantity(orderDetail.getQuantity());
                     orderDetailResponse.setProductImg(product.getAvatarProduct());
+                    orderDetailResponse.setAddress(detailRepository.findProfileDetailBy(orderDetail.getCart().getUser().getEmail()).get().getAddress());
                     orderDetailResponse.setPriceTotal(orderDetail.getPriceTotal());
                     orderDetailResponse.setStoreName(store.getStoreName());
                     return orderDetailResponse;
@@ -239,6 +245,11 @@ public class OrderService implements IOrderService {
         Product product= productRepo.findByName(store.getStoreId(),orderDetail.getProductName()).get();
         product.setQuantity(product.getQuantity()+orderDetail.getQuantity());
         productRepo.save(product);
+        var noti= Notify.builder()
+                .description("Cập nhật đơn hàng "+ orderDetail.getProductName())
+                .user(orderDetail.getCart().getUser())
+                .build();
+        notifyRepository.save(noti);
     }
     /*
      * Duy Thuong
@@ -286,11 +297,34 @@ public class OrderService implements IOrderService {
                     orderDetailResponse.setQuantity(orderDetail.getQuantity());
                     orderDetailResponse.setProductImg(product.getAvatarProduct());
                     orderDetailResponse.setPriceTotal(orderDetail.getPriceTotal());
+                    orderDetailResponse.setAddress(detailRepository.findProfileDetailBy(orderDetail.getCart().getUser().getEmail()).get().getAddress());
                     orderDetailResponse.setStoreName(store.getStoreName());
                     return orderDetailResponse;
                 }
         );
     }
+
+    @Override
+    public List<OrderDetailResponse> getOrderDetailByShipperId(int id) {
+        List<OrderDetailResponse> orderDetailResponses= orderDetailRepo.getOrderDetailByShipperId(id).stream().map(
+                orderDetail -> {
+                    Store store= storeRepo.findStoreByName(orderDetail.getStoreName()).get();
+                    Product product= productRepo.findByName(store.getStoreId(),orderDetail.getProductName()).get();
+                    OrderDetailResponse  orderDetailResponse= new OrderDetailResponse();
+                    orderDetailResponse.setOrderDetailId(orderDetail.getOrderDetailId());
+                    orderDetailResponse.setProductName(orderDetail.getProductName());
+                    orderDetailResponse.setOrderStatusName(orderDetail.getOrderStatus().getOrderStatusName());
+                    orderDetailResponse.setQuantity(orderDetail.getQuantity());
+                    orderDetailResponse.setProductImg(product.getAvatarProduct());
+                    orderDetailResponse.setPriceTotal(orderDetail.getPriceTotal());
+                    orderDetailResponse.setStoreName(store.getStoreName());
+                    orderDetailResponse.setAddress(detailRepository.findProfileDetailBy(orderDetail.getCart().getUser().getEmail()).get().getAddress());
+                    return orderDetailResponse;
+                }
+        ).collect(Collectors.toList());
+        return orderDetailResponses;
+    }
+
 
 
 }

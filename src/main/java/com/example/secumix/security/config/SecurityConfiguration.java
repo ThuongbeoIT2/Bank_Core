@@ -47,7 +47,8 @@ public class SecurityConfiguration {
                     "/login/oauth2/code/google",
                     "/login/oauth2/code/facebook",
                     "/api/v1/auth/bank",
-                    "/api/v1/auth/bank/{Represent}"
+                    "/api/v1/auth/bank/{Represent}",
+                     "/category/getall"
             };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

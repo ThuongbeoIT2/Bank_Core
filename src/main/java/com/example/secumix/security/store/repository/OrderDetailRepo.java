@@ -18,5 +18,9 @@ public interface OrderDetailRepo extends JpaRepository<OrderDetail, Integer> {
     Optional<OrderDetail> findByIDandUser(int orderdetailid, String email);
     @Query("select o from orderdetail o where o.storeName=:storeName")
     List<OrderDetail> getAllByStore(String storeName);
+    @Query("select o from orderdetail  o where o.shipperid=:shipperid and o.orderStatus.orderStatusId=2")
+    List<OrderDetail> getOrderDetailByShipperId(int shipperid);
 
+    @Query("select sum(o.priceTotal) from orderdetail o where o.orderStatus.orderStatusId=3 and o.storeName=:storename")
+    long RevenueByStore(String storename);
 }
