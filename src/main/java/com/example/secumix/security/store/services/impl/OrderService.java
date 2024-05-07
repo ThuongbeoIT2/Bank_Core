@@ -46,11 +46,7 @@ public class OrderService implements IOrderService {
     private PayRepo payRepo;
     @Autowired
     private ProfileDetailRepository detailRepository;
-    /*
-     * Duy Thuong
-     * Thống kê cho toàn bộ hệ thống.
-     * PreAuthoz = SHIPPER
-     */
+
     @Override
     public List<OrderDetailResponse> GetAll() {
         return orderDetailRepo.findAll().stream()
@@ -72,11 +68,7 @@ public class OrderService implements IOrderService {
                 }
         ).collect(Collectors.toList());
     }
-    /*
-     * Duy Thuong
-     * Xem tất cả các đơn hàng của Store
-     * PreAuthoz = MANAGER và Store do manager đó đăng ký
-     */
+
     @Override
     public List<OrderDetailResponse> GetAllStore(String storeName) {
 
@@ -97,11 +89,7 @@ public class OrderService implements IOrderService {
                 }
         ).collect(Collectors.toList());
     }
-    /*
-     * Duy Thuong
-     * Xem toàn bộ đơn hàng
-     * PreAuthoz = SHIPPER
-     */
+
     @Override
     public List<OrderDetailResponse> GetAllByUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -123,22 +111,14 @@ public class OrderService implements IOrderService {
                 }
         ).collect(Collectors.toList());
     }
-    /*
-     * Duy Thuong
-     * Tìm kiếm đơn của khách hàng có tồn tại
-     * PreAuthoz = SHIPPER
-     */
+
     @Override
     public Optional<OrderDetail> findByIDandUser(int orderdetailid) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
         return orderDetailRepo.findByIDandUser(orderdetailid,email);
     }
-    /*
-     * Duy Thuong
-     * Mua ngay tại trang chi tiết
-     * PreAuthoz = USER
-     */
+
     @Override
     public void Insert(OrderDetailRequest orderDetailRequest) {
         Product product= productRepo.findById(orderDetailRequest.getProductid()).get();
@@ -178,11 +158,6 @@ public class OrderService implements IOrderService {
         orderDetailRepo.save(orderDetail);
     }
 
-    /*
-     * Duy Thuong
-     * Chuyển trạng thái sang vận chuyển kết hợp shipper nhận đơn
-     * PreAuthoz = SHIPPER
-     */
     @Override
     public void ChangeStatus1(int orderdetailid) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
