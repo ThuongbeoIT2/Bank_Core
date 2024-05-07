@@ -2,6 +2,7 @@ package com.example.secumix.security.modelapp.repository;
 
 
 import com.example.secumix.security.modelapp.entities.Trade;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,8 +12,10 @@ import java.util.Collection;
 import java.util.List;
 @Repository
 public interface TradeRepo extends JpaRepository<Trade,Integer> {
-    @Query("select o from trade o where o.user.email=:email")
+    @Query("select o from trade o where o.user.email=:email order by o.createdAt desc ")
     List<Trade> findTradeByUser(String email);
+    @Query("select o from trade o where o.user.email = :email order by o.createdAt desc")
+    List<Trade> findTradeByUserTop5(String email, Pageable pageable);
     @Query("select o from trade o where o.user.email=:email and o.category.cateName=:cate")
     List<Trade> findTradeByUserCate(String email,String cate);
     @Query("SELECT t FROM trade t WHERE t.user.email = :email AND YEAR(t.createdAt) = YEAR(CURRENT_DATE()) AND MONTH(t.createdAt) = MONTH(CURRENT_DATE())")
