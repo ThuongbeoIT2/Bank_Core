@@ -1,7 +1,5 @@
 package com.example.secumix.security.modelapp.entities;
 
-
-
 import com.example.secumix.security.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

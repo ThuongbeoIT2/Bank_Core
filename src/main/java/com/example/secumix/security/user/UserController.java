@@ -41,12 +41,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(profileResponse.get());
     }
 
-    @PatchMapping
-    public ResponseEntity<?> changePassword(
-          @RequestBody ChangePasswordRequest request,
-          Principal connectedUser
+    @PostMapping(value = "/changepassword")
+    public ResponseEntity<String> changePassword(
+          @RequestBody ChangePasswordRequest request
     ) {
-        service.changePassword(request, connectedUser);
-        return ResponseEntity.ok().build();
+        service.changePassword(request);
+        return ResponseEntity.ok().body("Thành công");
     }
 }

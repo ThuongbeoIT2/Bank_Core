@@ -12,6 +12,7 @@ import com.example.secumix.security.modelapp.response.TradeResponse;
 import com.example.secumix.security.user.User;
 import com.example.secumix.security.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -40,6 +41,23 @@ public class TradeController {
         Authentication auth= SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
         List<TradeResponse> tradeResponses= tradeRepo.findTradeByUser(email).stream().map(
+                trade -> {
+                    TradeResponse tradeResponse= new TradeResponse();
+                    tradeResponse.setTradeId(trade.getTradeId());
+                    tradeResponse.setCost(trade.getCost());
+                    tradeResponse.setCateName(trade.getCategory().getCateName());
+                    tradeResponse.setTitle(trade.getTitle());
+                    tradeResponse.setDate(trade.getDate());
+                    return tradeResponse;
+                }
+        ).collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.OK).body(tradeResponses);
+    }
+    @GetMapping(value = "/account/trade/gettop5")
+    ResponseEntity<List<TradeResponse>> getallbyUserTop5(){
+        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        List<TradeResponse> tradeResponses= tradeRepo.findTradeByUserTop5(email, PageRequest.of(0, 5)).stream().map(
                 trade -> {
                     TradeResponse tradeResponse= new TradeResponse();
                     tradeResponse.setTradeId(trade.getTradeId());

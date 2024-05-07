@@ -48,7 +48,8 @@ public class SecurityConfiguration {
                     "/login/oauth2/code/facebook",
                     "/api/v1/auth/bank",
                     "/api/v1/auth/bank/{Represent}",
-                     "/category/getall"
+                     "/category/getall",
+                    "/swagger-ui-custom"
             };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

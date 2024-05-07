@@ -71,8 +71,8 @@ public class SpendingLimitController {
         String email = auth.getName();
         User user= userRepository.findByEmail(email).get();
         Optional<Category> category = categoryrepo.findById(cateid);
-        if (category.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Đã tồn tại");
+        if (category.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Loai quỹ không tônf tại");
         }
         if (spendingLimit<0){
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Quỹ tháng phải dương");
