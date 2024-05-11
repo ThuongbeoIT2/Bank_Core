@@ -36,6 +36,15 @@ public enum Role {
                   MANAGER_CREATE
           )
   ),
+  CUSTOMER(
+          Set.of(
+                  CUSTOMER_READ,
+                  CUSTOMER_CREATE,
+                  CUSTOMER_DELETE,
+                  CUSTOMER_UPDATE
+
+          )
+  ),
 
     SHIPPER(
             Set.of(

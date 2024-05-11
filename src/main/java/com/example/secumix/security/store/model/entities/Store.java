@@ -46,7 +46,7 @@ public class Store {
     @JoinColumn(name = "storetypeid", foreignKey = @ForeignKey(name = "fk_store_storetype"))
     private StoreType storeType;
 
-    @OneToMany
+    @OneToMany(mappedBy = "store")
     @JsonBackReference
     private List<Product> productList;
     @Column

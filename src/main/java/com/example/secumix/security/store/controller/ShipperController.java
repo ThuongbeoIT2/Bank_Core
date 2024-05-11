@@ -3,7 +3,7 @@ package com.example.secumix.security.store.controller;
 import com.example.secumix.security.ResponseObject;
 import com.example.secumix.security.store.model.entities.OrderDetail;
 import com.example.secumix.security.store.model.response.OrderDetailResponse;
-import com.example.secumix.security.store.model.services.IOrderService;
+import com.example.secumix.security.store.services.IOrderService;
 import com.example.secumix.security.store.repository.OrderDetailRepo;
 import com.example.secumix.security.user.User;
 import com.example.secumix.security.user.UserRepository;

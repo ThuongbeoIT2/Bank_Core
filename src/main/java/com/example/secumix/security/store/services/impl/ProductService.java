@@ -1,10 +1,10 @@
-package com.example.secumix.security.store.model.services.impl;
+package com.example.secumix.security.store.services.impl;
 
 
 
 import com.example.secumix.security.store.model.response.ProductResponse;
 
-import com.example.secumix.security.store.model.services.IProductService;
+import com.example.secumix.security.store.services.IProductService;
 import com.example.secumix.security.store.repository.ProductRepo;
 
 

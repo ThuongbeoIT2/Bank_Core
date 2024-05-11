@@ -7,7 +7,7 @@ import com.example.secumix.security.ResponseObject;
 import com.example.secumix.security.store.model.entities.Product;
 import com.example.secumix.security.store.model.entities.Store;
 import com.example.secumix.security.store.model.response.ImportResponse;
-import com.example.secumix.security.store.model.services.IProductService;
+import com.example.secumix.security.store.services.IProductService;
 import com.example.secumix.security.store.repository.ImportDetailRepo;
 import com.example.secumix.security.store.repository.OrderDetailRepo;
 import com.example.secumix.security.store.repository.ProductRepo;
@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/manager/store")
+@RequestMapping(value = "/management/store")
 public class ManagerStoreController {
     @Autowired
     private IProductService productService;
@@ -57,7 +57,7 @@ public class ManagerStoreController {
         }
         if (!email.equals(store.get().getEmailmanager())){
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponseObject("OK","Không phải cửa hàng của m.","")
+                    new ResponseObject("OK","Không phải cửa hàng của bạn.","")
             );
         }
         List<ImportResponse> importResponses=importDetailRepo.findByStore(storeid).stream().map(

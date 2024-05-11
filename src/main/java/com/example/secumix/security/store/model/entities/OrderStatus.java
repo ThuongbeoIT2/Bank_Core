@@ -25,7 +25,7 @@ public class OrderStatus {
     @Column(name = "orderstatusname")
     private String orderStatusName;
 
-    @OneToMany
+    @OneToMany(mappedBy = "orderStatus", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderDetail> orderDetailList;
 

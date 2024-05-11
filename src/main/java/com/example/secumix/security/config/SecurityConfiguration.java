@@ -76,6 +76,10 @@ public class SecurityConfiguration {
                                 MANAGER_UPDATE.name())
                         .antMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(),
                                 MANAGER_DELETE.name())
+                        .antMatchers(GET, "/api/v1/customer/**").hasAnyAuthority(CUSTOMER_READ.name())
+                        .antMatchers(POST, "/api/v1/customer/**").hasAnyAuthority(CUSTOMER_CREATE.name())
+                        .antMatchers(PUT, "/api/v1/customer/**").hasAnyAuthority(CUSTOMER_UPDATE.name())
+                        .antMatchers(DELETE, "/api/v1/customer/**").hasAnyAuthority(CUSTOMER_DELETE.name())
                         .anyRequest().authenticated())
                 .oauth2Login()
                 .userInfoEndpoint()

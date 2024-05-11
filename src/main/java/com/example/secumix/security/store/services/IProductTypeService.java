@@ -1,4 +1,4 @@
-package com.example.secumix.security.store.model.services;
+package com.example.secumix.security.store.services;
 
 
 import com.example.secumix.security.store.model.entities.ProductType;

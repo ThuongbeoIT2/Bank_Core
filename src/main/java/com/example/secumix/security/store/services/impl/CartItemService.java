@@ -1,4 +1,4 @@
-package com.example.secumix.security.store.model.services.impl;
+package com.example.secumix.security.store.services.impl;
 
 import com.example.secumix.security.Utils.UserUtils;
 import com.example.secumix.security.notify.Notify;
@@ -8,7 +8,7 @@ import com.example.secumix.security.store.model.entities.CartItem;
 import com.example.secumix.security.store.model.entities.Product;
 import com.example.secumix.security.store.model.request.CartItemRequest;
 import com.example.secumix.security.store.model.response.CartItemResponse;
-import com.example.secumix.security.store.model.services.ICartItemService;
+import com.example.secumix.security.store.services.ICartItemService;
 import com.example.secumix.security.store.repository.CartItemRepo;
 import com.example.secumix.security.store.repository.CartRepo;
 import com.example.secumix.security.store.repository.ProductRepo;

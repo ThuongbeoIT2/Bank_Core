@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/management")
+@RequestMapping("/api/v1")
 public class StoreController {
     @Autowired
     private StoreTypeRepo storeTypeRepo;
@@ -50,7 +50,7 @@ public class StoreController {
         }
     }
 
-    @PostMapping(value = "/store/{storetypeid}/insert")
+    @PostMapping(value = "/management/store/{storetypeid}/insert")
     public ResponseEntity<ResponseObject> insertStore(@RequestParam String address,
                                                       @RequestParam MultipartFile image,
                                                       @RequestParam String phonenumber,
@@ -92,6 +92,9 @@ public class StoreController {
         );
     }
 
+
+    //--------------------------------admin
+
     @PostMapping(value = "/admin/storetype/insert")
     public ResponseEntity<ResponseObject> insertStoreType(@RequestParam String name
     ){
@@ -106,7 +109,7 @@ public class StoreController {
                 .build();
         storeTypeRepo.save(storeType);
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK","Scucess","")
+                new ResponseObject("OK","Success","")
         );
     }
 }

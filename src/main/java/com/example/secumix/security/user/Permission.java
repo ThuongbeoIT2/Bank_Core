@@ -17,7 +17,11 @@ public enum Permission {
     SHIPPER_READ("shipper:read"),
     SHIPPER_UPDATE("shipper:update"),
     SHIPPER_DELETE("shipper:delete"),
-    SHIPPER_CREATE("shipper:create");
+    SHIPPER_CREATE("shipper:create"),
+    CUSTOMER_READ("customer:read"),
+    CUSTOMER_UPDATE("customer:update"),
+    CUSTOMER_CREATE("customer:create"),
+    CUSTOMER_DELETE("customer:delete");
     @Getter
     private final String permission;
 }

@@ -23,11 +23,8 @@ public class StoreType {
     private int storeTypeId;
 
     private String storeTypeName;
-    @OneToMany
-    @JsonManagedReference
-    private Set<Store> stores;
 
-    @OneToMany
+    @OneToMany(mappedBy = "storeType")
     @JsonManagedReference
     private List<ProductType> productType;
 

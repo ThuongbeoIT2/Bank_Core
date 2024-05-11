@@ -77,7 +77,7 @@ public class AuthenticationController {
     }
 
   }
-  @PostMapping("/register/managerstore")
+  @PostMapping("/register/manager")
   public ResponseEntity<ResponseObject> registerManager(
           @RequestBody RegisterRequest request
   ) {

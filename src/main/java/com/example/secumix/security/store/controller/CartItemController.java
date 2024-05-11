@@ -5,7 +5,7 @@ import com.example.secumix.security.store.model.entities.CartItem;
 import com.example.secumix.security.store.model.entities.Product;
 import com.example.secumix.security.store.model.request.CartItemRequest;
 
-import com.example.secumix.security.store.model.services.ICartItemService;
+import com.example.secumix.security.store.services.ICartItemService;
 import com.example.secumix.security.store.repository.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

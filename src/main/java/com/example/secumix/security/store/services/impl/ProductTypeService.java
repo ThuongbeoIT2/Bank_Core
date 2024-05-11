@@ -1,9 +1,9 @@
-package com.example.secumix.security.store.model.services.impl;
+package com.example.secumix.security.store.services.impl;
 
 
 import com.example.secumix.security.store.model.entities.ProductType;
 import com.example.secumix.security.store.model.response.ProductTypeResponse;
-import com.example.secumix.security.store.model.services.IProductTypeService;
+import com.example.secumix.security.store.services.IProductTypeService;
 import com.example.secumix.security.store.repository.ProductTypeRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

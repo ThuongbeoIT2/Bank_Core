@@ -35,7 +35,7 @@ public class ProductType {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @OneToMany
+    @OneToMany(mappedBy = "productType")
     @JsonManagedReference
     private Set<Product> products;
     @ManyToOne

@@ -62,7 +62,7 @@ public class Product {
     @JoinColumn(name = "producttypeid", foreignKey = @ForeignKey(name = "fk_product_producttype"))
     private ProductType productType;
 
-    @OneToMany
+    @OneToMany(mappedBy = "product")
     @JsonManagedReference
     private Set<ProductImage> productImages;
 

@@ -2,7 +2,7 @@ package com.example.secumix.security.auth;
 
 
 
-import HaNoi.QA.libPersonal.EmailMix;
+import com.example.secumix.security.Utils.EmailMix;
 import com.example.secumix.security.Utils.UserUtils;
 import com.example.secumix.security.config.JwtService;
 import com.example.secumix.security.notify.Notify;

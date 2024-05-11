@@ -6,8 +6,8 @@ import com.example.secumix.security.Utils.UserUtils;
 
 
 import com.example.secumix.security.store.model.entities.*;
-import com.example.secumix.security.store.model.services.IProductService;
-import com.example.secumix.security.store.model.services.IProductTypeService;
+import com.example.secumix.security.store.services.IProductService;
+import com.example.secumix.security.store.services.IProductTypeService;
 import com.example.secumix.security.store.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/product")
+@RequestMapping(value = "/api/v1")
 public class ProductController {
 
     @Value("${default_avt}")
@@ -144,7 +144,7 @@ public class ProductController {
         );
     }
 
-    @PostMapping(value = "/managerment/product/{storeid}/{producttypename}/insert")
+    @PostMapping(value = "/management/product/{storeid}/{producttypename}/insert")
     ResponseEntity<ResponseObject> insertProduct(@RequestParam MultipartFile avatar ,
                                                  @RequestParam String name,
                                                  @RequestParam String describe,
@@ -202,7 +202,7 @@ public class ProductController {
     }
 
 
-    @GetMapping(value = "/info/{productid}")
+    @GetMapping(value = "/product/info/{productid}")
     ResponseEntity<ResponseObject> GetInfoProduct(@PathVariable int productid){
         Optional<Product> product = productRepo.findById(productid);
         if (product.isPresent()){
@@ -265,10 +265,10 @@ public class ProductController {
     }
 
 
-    @PostMapping(value = "/{storetypename}/producttype/insert")
+    @PostMapping(value = "/producttype/insert")
     ResponseEntity<ResponseObject> insertProductType(@RequestParam String name,
                                                      @RequestParam MultipartFile avatar,
-                                                     @PathVariable String storetypename){
+                                                     @RequestParam String storetypename){
         Optional<StoreType> storeType = storeTypeRepo.findByName(storetypename);
         if(storeType.isEmpty())
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
@@ -296,7 +296,7 @@ public class ProductController {
             }
         }else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ResponseObject("FAILED","fkdfkdfgdksjf","")
+                    new ResponseObject("FAILED","Thất bại","")
             );
         }
 
