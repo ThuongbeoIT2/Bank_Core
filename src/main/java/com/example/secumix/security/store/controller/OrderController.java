@@ -24,7 +24,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping(value = "/customer/order")
+@RequestMapping(value = "/api/v1")
 public class OrderController {
     @Autowired
     private IOrderService orderService;
@@ -37,13 +37,13 @@ public class OrderController {
     @Autowired
     private OrderDetailRepo orderDetailRepo;
 
-    @GetMapping(value = "/getall")
+    @GetMapping(value = "/customer/order/getall")
     ResponseEntity<ResponseObject> getAllByUSer(){
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK","Lay ra thanh cong",orderService.GetAllByUser())
         );
     }
-    @GetMapping(value = "/detail/{orderdetailid}")
+    @GetMapping(value = "/order/detail/{orderdetailid}")
     ResponseEntity<ResponseObject> getInfoOrder(@PathVariable int orderdetailid){
         if(IsPermisson(orderdetailid)){
             return ResponseEntity.status(HttpStatus.OK).body(
@@ -66,7 +66,7 @@ public class OrderController {
         return false;
     }
 
-    @PostMapping(value = "/insert")
+    @PostMapping(value = "/customer/order/insert")
     ResponseEntity<ResponseObject> InsertDR(@RequestParam int quantity,
                                             @RequestParam int productid){
         Optional<Product> product=productRepo.findById(productid);
@@ -75,18 +75,14 @@ public class OrderController {
                     new ResponseObject("OK","Không đủ hàng trong kho","")
             );
         }
-        if (product.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponseObject("OK","San pham không tồn tại","")
-            );
-        }
+
         OrderDetailRequest orderDetailRequest= new OrderDetailRequest(quantity, productid);
         orderService.Insert(orderDetailRequest);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK","Đặt hàng thành công","")
         );
     }
-    @PostMapping(value = "/insert/{cartitemid}")
+    @PostMapping(value = "/customer/order/insert/{cartitemid}")
     ResponseEntity<ResponseObject> InsertIDR(@PathVariable int cartitemid){
         Optional<CartItem> cartItem = cartItemService.findByIdandUser(cartitemid);
         if (cartItem.isEmpty()){
@@ -101,7 +97,7 @@ public class OrderController {
         );
     }
 
-    @GetMapping(value = "/delete/{orderdetailid}")
+    @GetMapping(value = "/customer/order/delete/{orderdetailid}")
     ResponseEntity<ResponseObject> ChangeStatus(@PathVariable int orderdetailid){
         orderService.ChangeStatus3(orderdetailid);
         return ResponseEntity.status(HttpStatus.OK).body(

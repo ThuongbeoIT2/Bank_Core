@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/customer")
+@RequestMapping(value = "/api/v1/customer")
 public class CartItemController {
     @Autowired
     private ICartItemService cartItemService;

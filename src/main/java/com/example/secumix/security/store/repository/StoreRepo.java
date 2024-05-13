@@ -16,4 +16,6 @@ public interface StoreRepo extends JpaRepository<Store, Integer> {
     Optional<Store> findStoreById(int storeId);
     @Query("select o from store o where o.storeName=:storeName")
     Optional<Store> findStoreByName(String storeName);
+    @Query("select o from store o where o.emailmanager=:email")
+    Optional<Store> findByEmailManager(String email);
 }

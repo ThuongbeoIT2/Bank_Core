@@ -44,8 +44,8 @@ public class Product {
     @Column(name = "status")
     private int status;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "updated_at")
     private Date updatedAt;

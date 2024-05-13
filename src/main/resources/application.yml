@@ -23,6 +23,7 @@ spring:
     allow-bean-definition-overriding: true
 
   jpa:
+    show-sql: true
     generate-ddl: true
     properties:
       hibernate:

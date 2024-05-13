@@ -20,8 +20,8 @@ public class ProductTypeService implements IProductTypeService {
     @Autowired
     private ProductTypeRepo productTypeRepo;
     @Override
-    public List<ProductTypeResponse> getAllProductType() {
-        return productTypeRepo.findAll().stream()
+    public List<ProductTypeResponse> getAllProductType(int storeId) {
+        return productTypeRepo.findByStoreId(storeId).stream()
                 .map(productType -> {
                     ProductTypeResponse productTypeResponse= modelMapper.map(productType, ProductTypeResponse.class);
                     return productTypeResponse;
@@ -29,8 +29,8 @@ public class ProductTypeService implements IProductTypeService {
     }
 
     @Override
-    public Optional<ProductType> findProductTypeByName(String name) {
-        return productTypeRepo.findProductTypeByName(name);
+    public Optional<ProductType> findProductTypeByName(String name, int storeId) {
+        return productTypeRepo.findProductTypeByName(name, storeId);
     }
 
     @Override

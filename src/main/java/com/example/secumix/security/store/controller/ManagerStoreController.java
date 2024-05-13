@@ -3,31 +3,34 @@ package com.example.secumix.security.store.controller;
 
 
 
+import com.cloudinary.Cloudinary;
 import com.example.secumix.security.ResponseObject;
+import com.example.secumix.security.notify.Notify;
+import com.example.secumix.security.notify.NotifyRepository;
 import com.example.secumix.security.store.model.entities.Product;
 import com.example.secumix.security.store.model.entities.Store;
+import com.example.secumix.security.store.model.entities.StoreType;
 import com.example.secumix.security.store.model.response.ImportResponse;
+import com.example.secumix.security.store.repository.*;
 import com.example.secumix.security.store.services.IProductService;
-import com.example.secumix.security.store.repository.ImportDetailRepo;
-import com.example.secumix.security.store.repository.OrderDetailRepo;
-import com.example.secumix.security.store.repository.ProductRepo;
-import com.example.secumix.security.store.repository.StoreRepo;
+import com.example.secumix.security.user.User;
+import com.example.secumix.security.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/management/store")
+@RequestMapping(value = "/api/v1/management")
 public class ManagerStoreController {
     @Autowired
     private IProductService productService;
@@ -39,90 +42,80 @@ public class ManagerStoreController {
     private OrderDetailRepo orderDetailRepo;
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private StoreTypeRepo storeTypeRepo;
+    @Autowired
+    private NotifyRepository notifyRepository;
+    @Autowired
+    private Cloudinary cloudinary;
+    @Autowired
+    private UserRepository userRepository;
+
+    public Map upload(MultipartFile file)  {
+        try{
+            Map data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
+            return data;
+        }catch (IOException io){
+            throw new RuntimeException("Image upload fail");
+        }
+    }
+
     @GetMapping(value = "/getallproduct")
     ResponseEntity<ResponseObject>GetAllProductByStore(){
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseObject("OK","Cac san pham torng cua hang cua ban.",productService.GetAllByStore())
         );
     }
-    @GetMapping(value = "/import/{storeid}/getall")
-    ResponseEntity<ResponseObject> GetAllImport(@PathVariable int storeid){
-        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        Optional<Store> store= storeRepo.findStoreById(storeid);
-        if (store.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("OK","Không có cửa hàng này.","")
-            );
-        }
-        if (!email.equals(store.get().getEmailmanager())){
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponseObject("OK","Không phải cửa hàng của bạn.","")
-            );
-        }
-        List<ImportResponse> importResponses=importDetailRepo.findByStore(storeid).stream().map(
-                importDetail -> {
-                    ImportResponse importResponse= new ImportResponse();
-                    importResponse.setImportDetailId(importDetail.getImportDetailId());
-                    importResponse.setQuantity(importDetail.getQuantity());
-                    importResponse.setPrice(importDetail.getPrice());
-                    importResponse.setProductName(importDetail.getProduct().getProductName());
-                    importResponse.setStoreName(store.get().getStoreName());
-                    importResponse.setCreatedAt(importDetail.getCreatedAt());
-                    importResponse.setPriceTotal(importDetail.getPriceTotal());
-                    return importResponse;
-                }
-        ).collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK","Thành công.",importResponses)
-        );
-    }
-    @GetMapping(value = "/inport/{storeid}/{productname}")
-    ResponseEntity<ResponseObject> GetAllImport(@PathVariable int storeid,
-                                                @PathVariable String productname){
-        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        Optional<Store> store= storeRepo.findStoreById(storeid);
-        Optional<Product> product= productRepo.findByName(storeid,productname);
 
-        if (store.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("OK","Không có cửa hàng này.","")
-            );
-        }
-        if (!email.equals(store.get().getEmailmanager())){
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponseObject("OK","Không phải cửa hàng của m.","")
-            );
-        }
-        if (product.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("OK","Không có sản phẩm này.","")
-            );
-        }
-        List<ImportResponse> importResponses=importDetailRepo.findByStoreandProduct(storeid,productname).stream().map(
-                importDetail -> {
-                    ImportResponse importResponse= new ImportResponse();
-                    importResponse.setImportDetailId(importDetail.getImportDetailId());
-                    importResponse.setQuantity(importDetail.getQuantity());
-                    importResponse.setPrice(importDetail.getPrice());
-                    importResponse.setProductName(importDetail.getProduct().getProductName());
-                    importResponse.setStoreName(store.get().getStoreName());
-                    importResponse.setCreatedAt(importDetail.getCreatedAt());
-                    importResponse.setPriceTotal(importDetail.getPriceTotal());
-                    return importResponse;
-                }
-        ).collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK","Thành công.",importResponses)
-        );
-    }
-    @GetMapping(value = "/store/storename/revenue")
+    @GetMapping(value = "/store/{storename}/revenue")
     ResponseEntity<ResponseObject> RevenueByStore(@PathVariable String storename){
        long  revenue = orderDetailRepo.RevenueByStore(storename);
        return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(
                "OK","Doanh thu ",revenue
        ));
     }
+
+    @PostMapping(value = "info/{storetypeid}/insert")
+    public ResponseEntity<ResponseObject> insertStore(@RequestParam String address,
+                                                      @RequestParam MultipartFile image,
+                                                      @RequestParam String phonenumber,
+                                                      @RequestParam String name,
+                                                      @PathVariable int storetypeid){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user= userRepository.findByEmail(email).get();
+        Optional<Store> store = storeRepo.findByPhonenumber(phonenumber);
+        Optional<StoreType> storeType = storeTypeRepo.findById(storetypeid);
+
+        if(store.isPresent())
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject("FAILED","Store phonenumber alreasy exsis","")
+            );
+        if(storeType.isEmpty())
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ResponseObject("FAILED","Not exist storetype","")
+            );
+        Map<String, Object> uploadResult = upload(image);
+
+        Store newObj = Store.builder()
+                .address(address)
+                .storeName(name)
+                .rate(5)
+                .emailmanager(email)
+                .phoneNumber(phonenumber)
+                .storeType(storeType.get())
+                .image(uploadResult.get("secure_url").toString())
+                .build();
+        storeRepo.save(newObj);
+        Notify notify= Notify.builder()
+                .description("Cửa hàng của bạn đã được mở".concat(newObj.getStoreName())) //Truyền link đến store đó
+                .user(user)
+                .build();
+        notifyRepository.save(notify);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseObject("OK","Success","")
+        );
+    }
+
 
 }

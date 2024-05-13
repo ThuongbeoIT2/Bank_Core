@@ -2,8 +2,15 @@ package com.example.secumix.security.store.services.impl;
 
 
 
+import com.example.secumix.security.Utils.UserUtils;
+import com.example.secumix.security.store.model.entities.Product;
+import com.example.secumix.security.store.model.entities.ProductType;
+import com.example.secumix.security.store.model.entities.Store;
+import com.example.secumix.security.store.model.request.AddProductRequest;
 import com.example.secumix.security.store.model.response.ProductResponse;
 
+import com.example.secumix.security.store.repository.ProductTypeRepo;
+import com.example.secumix.security.store.repository.StoreRepo;
 import com.example.secumix.security.store.services.IProductService;
 import com.example.secumix.security.store.repository.ProductRepo;
 
@@ -21,6 +28,10 @@ import java.util.stream.Collectors;
 public class ProductService implements IProductService {
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private StoreRepo storeRepo;
+    @Autowired
+    private ProductTypeRepo productTypeRepo;
 
     @Override
     public List<ProductResponse> getAllProduct() {
@@ -32,7 +43,7 @@ public class ProductService implements IProductService {
                     productResponse.setProductType(product.getProductType().getProductTypeName());
                     productResponse.setQuantity(product.getQuantity());
                     productResponse.setStoreName(product.getStore().getStoreName());
-                    productResponse.setTitle(product.getTitle());
+                    productResponse.setDescription(product.getDescription());
                     productResponse.setPrice(product.getPrice());
                     productResponse.setStatus(product.getStatus());
                     productResponse.setDiscount(product.getDiscount());
@@ -54,7 +65,7 @@ public class ProductService implements IProductService {
                     productResponse.setProductType(product.getProductType().getProductTypeName());
                     productResponse.setQuantity(product.getQuantity());
                     productResponse.setStoreName(product.getStore().getStoreName());
-                    productResponse.setTitle(product.getTitle());
+                    productResponse.setDescription(product.getDescription());
                     productResponse.setPrice(product.getPrice());
                     productResponse.setStatus(product.getStatus());
                     productResponse.setDiscount(product.getDiscount());
@@ -76,7 +87,7 @@ public class ProductService implements IProductService {
                     productResponse.setProductType(product.getProductType().getProductTypeName());
                     productResponse.setQuantity(product.getQuantity());
                     productResponse.setStoreName(product.getStore().getStoreName());
-                    productResponse.setTitle(product.getTitle());
+                    productResponse.setDescription(product.getDescription());
                     productResponse.setPrice(product.getPrice());
                     productResponse.setStatus(product.getStatus());
                     productResponse.setDiscount(product.getDiscount());
@@ -96,7 +107,7 @@ public class ProductService implements IProductService {
                     productResponse.setProductType(product.getProductType().getProductTypeName());
                     productResponse.setQuantity(product.getQuantity());
                     productResponse.setStoreName(product.getStore().getStoreName());
-                    productResponse.setTitle(product.getTitle());
+                    productResponse.setDescription(product.getDescription());
                     productResponse.setPrice(product.getPrice());
                     productResponse.setStatus(product.getStatus());
                     productResponse.setDiscount(product.getDiscount());
@@ -116,7 +127,7 @@ public class ProductService implements IProductService {
                     productResponse.setProductType(product.getProductType().getProductTypeName());
                     productResponse.setQuantity(product.getQuantity());
                     productResponse.setStoreName(product.getStore().getStoreName());
-                    productResponse.setTitle(product.getTitle());
+                    productResponse.setDescription(product.getDescription());
                     productResponse.setPrice(product.getPrice());
                     productResponse.setStatus(product.getStatus());
                     productResponse.setDiscount(product.getDiscount());
@@ -125,4 +136,40 @@ public class ProductService implements IProductService {
                 }
         ).collect(Collectors.toList());
     }
+
+    @Override
+    public Optional<Product> findById(int productid) {
+        return productRepo.findById(productid);
+    }
+
+    @Override
+    public Optional<Product> findByName(int storeid, String name) {
+        return productRepo.findByName(storeid, name);
+    }
+
+    @Override
+    public void saveProduct(AddProductRequest addProductRequest) {
+        Store store = storeRepo.findStoreById(addProductRequest.getStoreId()).get();
+        System.out.println("here1");
+        ProductType productType = productTypeRepo.findProductTypeByName(addProductRequest.getProducttypename(), addProductRequest.getStoreId()).get();
+        Product newObj = Product.builder()
+                .avatarProduct(addProductRequest.getAvatar())
+                .discount(0)
+                .store(store)
+                .view(0)
+                .status(0)
+                .productType(productType)
+                .createdAt(UserUtils.getCurrentDay())
+                .updatedAt(UserUtils.getCurrentDay())
+                .productName(addProductRequest.getName())
+                .description(addProductRequest.getDescription())
+                .price(addProductRequest.getPrice())
+                .quantity(0)
+                .build();
+        System.out.println(newObj.getAvatarProduct()+newObj.getProductName());
+        productRepo.save(newObj);
+        System.out.println("hihi");
+    }
+
+
 }

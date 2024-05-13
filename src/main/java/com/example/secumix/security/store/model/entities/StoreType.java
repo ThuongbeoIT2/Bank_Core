@@ -24,9 +24,6 @@ public class StoreType {
 
     private String storeTypeName;
 
-    @OneToMany(mappedBy = "storeType")
-    @JsonManagedReference
-    private List<ProductType> productType;
 
 
 }

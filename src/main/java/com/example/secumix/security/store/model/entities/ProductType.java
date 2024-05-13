@@ -40,7 +40,7 @@ public class ProductType {
     private Set<Product> products;
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "storetypeid",foreignKey = @ForeignKey(name = "fk_storetype_producttype"))
-    private StoreType storeType;
+    @JoinColumn(name = "storeid",foreignKey = @ForeignKey(name = "fk_store_producttype"))
+    private Store store;
 
 }

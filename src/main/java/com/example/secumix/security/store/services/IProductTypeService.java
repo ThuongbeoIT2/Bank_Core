@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProductTypeService {
-    List<ProductTypeResponse> getAllProductType();
-    Optional<ProductType> findProductTypeByName(String name);
+    List<ProductTypeResponse> getAllProductType(int storeId);
+    Optional<ProductType> findProductTypeByName(String name, int storeId);
     void Save(ProductType productType);
 
 }

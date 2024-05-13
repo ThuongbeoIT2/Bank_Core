@@ -16,7 +16,7 @@ public class ProductResponse {
     private int status;
 
 
-    private String title;
+    private String description;
 
 
     private int view;

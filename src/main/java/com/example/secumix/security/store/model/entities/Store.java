@@ -3,6 +3,7 @@ package com.example.secumix.security.store.model.entities;
 
 import com.example.secumix.security.user.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -45,6 +46,10 @@ public class Store {
     @JsonBackReference
     @JoinColumn(name = "storetypeid", foreignKey = @ForeignKey(name = "fk_store_storetype"))
     private StoreType storeType;
+
+    @OneToMany(mappedBy = "store")
+    @JsonManagedReference
+    private List<ProductType> productType;
 
     @OneToMany(mappedBy = "store")
     @JsonBackReference
