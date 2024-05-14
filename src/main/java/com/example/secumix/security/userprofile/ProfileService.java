@@ -9,14 +9,15 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class ProfileService {
+public class ProfileService implements IProfileService {
     @Autowired
     private ProfileDetailRepository profileDetailRepository;
     @Autowired
     private UserService userService;
 
     private final ModelMapper modelMapper= new ModelMapper();
-    void UpdateProfile(ProfileRequest profileRequest,int userID){
+    @Override
+    public void UpdateProfile(ProfileRequest profileRequest,int userID){
         var user= userService.findById(userID);
         if (user!=null){
             ProfileDetail profileDetail= profileDetailRepository.findProfileDetailBy(user.getEmail()).get();
@@ -28,8 +29,8 @@ public class ProfileService {
             profileDetail.setAvatar(profileRequest.getAvatar());
             profileDetailRepository.save(profileDetail);
         }
-    }
-    ProfileResponse findProfileByUserID(int userID){
+    }@Override
+    public ProfileResponse findProfileByUserID(int userID){
       ProfileDetail profileDetail =profileDetailRepository.findByUserID(userID);
       ProfileResponse profileResponse= modelMapper.map(profileDetail, ProfileResponse.class);
       return profileResponse;

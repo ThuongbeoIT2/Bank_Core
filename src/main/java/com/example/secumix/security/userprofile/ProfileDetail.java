@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
@@ -34,7 +35,9 @@ public class ProfileDetail {
     private String avatar;
     @Column(name = "createdAt")
     private Date createdAt;
-    @OneToOne
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID",foreignKey = @ForeignKey(name = "fk_user_profiledetail"))
     private User user;
 

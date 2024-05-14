@@ -9,13 +9,18 @@ import com.example.secumix.security.store.model.entities.Store;
 import com.example.secumix.security.store.model.request.AddProductRequest;
 import com.example.secumix.security.store.model.response.ProductResponse;
 
+import com.example.secumix.security.store.model.response.StoreCustomerRespone;
 import com.example.secumix.security.store.repository.ProductTypeRepo;
 import com.example.secumix.security.store.repository.StoreRepo;
 import com.example.secumix.security.store.services.IProductService;
 import com.example.secumix.security.store.repository.ProductRepo;
 
 
+import com.example.secumix.security.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -171,5 +176,48 @@ public class ProductService implements IProductService {
         System.out.println("hihi");
     }
 
+    @Override
+    public Page<ProductResponse> findAllProductPaginable(Pageable pageable, int storeId) {
+        Page<Product> products = productRepo.getAllByStoreWithPagination(storeId,pageable);
+        List<ProductResponse> productResponseList = products
+                .stream()
+                .map(ProductService::convertToProductResponse)
+                .collect(Collectors.toList());
 
+        return new PageImpl<>(productResponseList, pageable, products.getTotalElements());
+    }
+
+    @Override
+    public Page<ProductResponse> findByTitleContainingIgnoreCase(String keyword, Pageable pageable, int storeId) {
+        Page<Product> products = productRepo.findByTitleContainingIgnoreCase(storeId, keyword, pageable);
+        List<ProductResponse> productResponseList = products
+                .stream()
+                .map(ProductService::convertToProductResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(productResponseList, pageable, products.getTotalElements());
+    }
+
+
+    public static ProductResponse convertToProductResponse(Product product) {
+        ProductResponse response = new ProductResponse();
+        response.setProductId(product.getProductId());
+        response.setAvatarProduct(product.getAvatarProduct());
+        response.setDiscount(product.getDiscount());
+        response.setPrice(product.getPrice());
+        response.setProductName(product.getProductName());
+        response.setQuantity(product.getQuantity());
+        response.setStatus(product.getStatus());
+        response.setDescription(product.getDescription());
+        response.setView(product.getView());
+        // Lấy tên của cửa hàng từ đối tượng Store
+        if (product.getStore() != null) {
+            response.setStoreName(product.getStore().getStoreName());
+        }
+        // Lấy tên loại sản phẩm từ đối tượng ProductType
+        if (product.getProductType() != null) {
+            response.setProductType(product.getProductType().getProductTypeName());
+        }
+        return response;
+    }
 }

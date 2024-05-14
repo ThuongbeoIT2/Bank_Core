@@ -7,13 +7,19 @@ import com.example.secumix.security.notify.NotifyRepository;
 import com.example.secumix.security.store.model.entities.*;
 import com.example.secumix.security.store.model.request.OrderDetailRequest;
 import com.example.secumix.security.store.model.response.OrderDetailResponse;
+import com.example.secumix.security.store.model.response.StoreCustomerRespone;
 import com.example.secumix.security.store.services.ICartItemService;
-import com.example.secumix.security.store.services.IOrderService;
+import com.example.secumix.security.store.services.IOrderDetailService;
 import com.example.secumix.security.store.repository.*;
 import com.example.secumix.security.user.User;
 import com.example.secumix.security.user.UserRepository;
+import com.example.secumix.security.userprofile.ProfileDetail;
 import com.example.secumix.security.userprofile.ProfileDetailRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,29 +29,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class OrderService implements IOrderService {
-    @Autowired
-     private OrderDetailRepo orderDetailRepo;
-    @Autowired
-    private ProductRepo productRepo;
-    @Autowired
-    private StoreRepo storeRepo;
-    @Autowired
-    private ICartItemService cartItemService;
-    @Autowired
-    private OrderStatusRepo orderStatusRepo;
-    @Autowired
-    private CartRepo cartRepo;
-    @Autowired
-    private NotifyRepository notifyRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CartItemRepo cartItemRepo;
-    @Autowired
-    private PayRepo payRepo;
-    @Autowired
-    private ProfileDetailRepository detailRepository;
+@RequiredArgsConstructor
+public class OrderDetailDetailService implements IOrderDetailService {
+    private final OrderDetailRepo orderDetailRepo;
+    private final ProductRepo productRepo;
+    private final StoreRepo storeRepo;
+    private final ICartItemService cartItemService;
+    private final OrderStatusRepo orderStatusRepo;
+    private final CartRepo cartRepo;
+    private final NotifyRepository notifyRepository;
+    private final UserRepository userRepository;
+    private final CartItemRepo cartItemRepo;
+    private final PayRepo payRepo;
+    private final ProfileDetailRepository detailRepository;
 
     @Override
     public List<OrderDetailResponse> GetAll() {
@@ -125,6 +121,7 @@ public class OrderService implements IOrderService {
         Store store= product.getStore();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
+
         Cart cart= cartRepo.findByEmail(email);
         OrderStatus orderStatus= orderStatusRepo.findById(1).get();
         OrderDetail orderDetail= OrderDetail.builder()
@@ -300,6 +297,47 @@ public class OrderService implements IOrderService {
         return orderDetailResponses;
     }
 
+    @Override
+    public Page<OrderDetailResponse> findAllOrderByCustomerAndStorePaginable(Pageable pageable, int storeid, int customerid) {
+        String storeName = storeRepo.findStoreById(storeid).get().getStoreName();
+        ProfileDetail profileDetail = productRepo.findByUserId(customerid);
+        String address = profileDetail.getAddress();
+        Page<OrderDetail> orderDetails = orderDetailRepo.findAllOrderByCustomerAndStorePaginable(pageable,storeName,customerid);
+        List<OrderDetailResponse> orderDetailResponses = orderDetails
+                .stream()
+                .map(orderDetail -> convertToOrderDetailResponse(storeName,orderDetail,address))
+                .collect(Collectors.toList());
+        return new PageImpl<>(orderDetailResponses, pageable, orderDetails.getTotalElements());
+    }
 
+    @Override
+    public Page<OrderDetailResponse> findOrderByTitleContainingIgnoreCase(String keyword, Pageable pageable, int storeid, int customerid) {
+        String storeName = storeRepo.findStoreById(storeid).get().getStoreName();
+        ProfileDetail profileDetail = productRepo.findByUserId(customerid);
+        String address = profileDetail.getAddress();
+        Page<OrderDetail> orderDetails = orderDetailRepo.findOrderByTitleContainingIgnoreCase( keyword,  pageable, storeName, customerid);
+        List<OrderDetailResponse> orderDetailResponses = orderDetails
+                .stream()
+                .map(orderDetail -> convertToOrderDetailResponse(storeName,orderDetail,address))
+                .collect(Collectors.toList());
+        return new PageImpl<>(orderDetailResponses, pageable, orderDetails.getTotalElements());
+    }
+    private OrderDetailResponse convertToOrderDetailResponse(String storeName, OrderDetail orderDetail, String address) {
+        OrderDetailResponse response = new OrderDetailResponse();
+        response.setOrderDetailId(orderDetail.getOrderDetailId());
+        response.setQuantity(orderDetail.getQuantity());
+        response.setProductName(orderDetail.getProductName());
+        response.setPriceTotal(orderDetail.getPriceTotal());
+
+        // Assuming orderStatus is not null and contains order status name
+        response.setOrderStatusName(orderDetail.getOrderStatus().getOrderStatusName());
+
+        // Assuming other properties are directly mapped
+        response.setAddress(address);
+        response.setProductImg(orderDetail.getProduct().getAvatarProduct());
+        response.setStoreName(storeName);
+
+        return response;
+    }
 
 }

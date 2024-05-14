@@ -2,6 +2,7 @@ package com.example.secumix.security.store.model.entities;
 
 
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -41,6 +42,8 @@ public class Pay {
 
     @Column(name = "voucherid")
     private Integer voucherId;
+
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "orderdetailid", foreignKey = @ForeignKey(name = "fk_pay_orderdetail"))
     private OrderDetail orderDetail;

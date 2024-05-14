@@ -11,11 +11,11 @@ import com.example.secumix.security.store.model.entities.Store;
 import com.example.secumix.security.store.model.response.ImportResponse;
 import com.example.secumix.security.store.repository.*;
 import com.example.secumix.security.store.services.*;
-import com.example.secumix.security.store.services.impl.ImportDetailDetailService;
-import com.example.secumix.security.store.services.impl.StoreService;
-import com.example.secumix.security.store.services.impl.StoreTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public class ImportController {
     @Autowired
     private ProductImageRepo productImageRepo;
     @Autowired
-    private IImportDetailService importDetailDetailService;
+    private IImportDetailService importDetailService;
     @Autowired
     private ImportDetailRepo importDetailRepo;
 
@@ -68,82 +69,112 @@ public class ImportController {
             throw new RuntimeException("Image upload fail");
         }
     }
+    @GetMapping(value = "/management/{storeid}/import/view")
+    ResponseEntity<ResponseObject> getAllImport(@PathVariable int storeid,
+                                                @RequestParam(required = false) String keyword,
+                                                @RequestParam(defaultValue = "1") int page,
+                                                @RequestParam(defaultValue = "10") int size){
+        try{
+            storeService.checkStoreAuthen(storeid);
+            List<ImportResponse> importResponses = new ArrayList<ImportResponse>();
+            Pageable paging = PageRequest.of(page - 1, size);
+            Page<ImportResponse> pageTuts;
+            if (keyword == null) {
+                pageTuts = importDetailService.findAllImportPaginable(paging,storeid);
+            } else {
+                pageTuts = importDetailService.findImportByTitleContainingIgnoreCase(keyword, paging, storeid);
+            }
 
-    @GetMapping(value = "/import/{storeid}/getall")
-    ResponseEntity<ResponseObject> GetAllImport(@PathVariable int storeid) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        Optional<Store> store = storeService.findStoreById(storeid);
-        if (store.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("OK", "Không có cửa hàng này.", "")
+            importResponses = pageTuts.getContent();
+
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ResponseObject("OK","Các hóa đơn nhập hàng của bạn",importResponses)
             );
+
+
+        }catch (CustomException ex) {
+            return ResponseEntity.status(ex.getStatus())
+                    .body(new ResponseObject("FAILED", ex.getMessage(), ""));
         }
-        if (!email.equals(store.get().getEmailmanager())) {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponseObject("OK", "Không phải cửa hàng của bạn.", "")
-            );
-        }
-        List<ImportResponse> importResponses = importDetailDetailService.findByStore(storeid).stream().map(
-                importDetail -> {
-                    ImportResponse importResponse = new ImportResponse();
-                    importResponse.setImportDetailId(importDetail.getImportDetailId());
-                    importResponse.setQuantity(importDetail.getQuantity());
-                    importResponse.setPrice(importDetail.getPrice());
-                    importResponse.setProductName(importDetail.getProduct().getProductName());
-                    importResponse.setStoreName(store.get().getStoreName());
-                    importResponse.setCreatedAt(importDetail.getCreatedAt());
-                    importResponse.setPriceTotal(importDetail.getPriceTotal());
-                    return importResponse;
-                }
-        ).collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK", "Thành công.", importResponses)
-        );
+
     }
+//
+//
+//    @GetMapping(value = "/import/{storeid}/getall")
+//    ResponseEntity<ResponseObject> GetAllImport(@PathVariable int storeid) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String email = auth.getName();
+//        Optional<Store> store = storeService.findStoreById(storeid);
+//        if (store.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+//                    new ResponseObject("OK", "Không có cửa hàng này.", "")
+//            );
+//        }
+//        if (!email.equals(store.get().getEmailmanager())) {
+//            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
+//                    new ResponseObject("OK", "Không phải cửa hàng của bạn.", "")
+//            );
+//        }
+//        List<ImportResponse> importResponses = importDetailService.findByStore(storeid).stream().map(
+//                importDetail -> {
+//                    ImportResponse importResponse = new ImportResponse();
+//                    importResponse.setImportDetailId(importDetail.getImportDetailId());
+//                    importResponse.setQuantity(importDetail.getQuantity());
+//                    importResponse.setPrice(importDetail.getPrice());
+//                    importResponse.setProductName(importDetail.getProduct().getProductName());
+//                    importResponse.setStoreName(store.get().getStoreName());
+//                    importResponse.setCreatedAt(importDetail.getCreatedAt());
+//                    importResponse.setPriceTotal(importDetail.getPriceTotal());
+//                    return importResponse;
+//                }
+//        ).collect(Collectors.toList());
+//        return ResponseEntity.status(HttpStatus.OK).body(
+//                new ResponseObject("OK", "Thành công.", importResponses)
+//        );
+//    }
+//
+//    @GetMapping(value = "/import/{storeid}/{productname}")
+//    ResponseEntity<ResponseObject> GetAllImport(@PathVariable int storeid,
+//                                                @PathVariable String productname) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String email = auth.getName();
+//        Optional<Store> store = storeService.findStoreById(storeid);
+//        Optional<Product> product = productRepo.findByName(storeid, productname);
+//
+//        if (store.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+//                    new ResponseObject("OK", "Không có cửa hàng này.", "")
+//            );
+//        }
+//        if (!email.equals(store.get().getEmailmanager())) {
+//            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
+//                    new ResponseObject("OK", "Không phải cửa hàng của m.", "")
+//            );
+//        }
+//        if (product.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+//                    new ResponseObject("OK", "Không có sản phẩm này.", "")
+//            );
+//        }
+//        List<ImportResponse> importResponses = importDetailService.findByStoreandProduct(storeid, productname).stream().map(
+//                importDetail -> {
+//                    ImportResponse importResponse = new ImportResponse();
+//                    importResponse.setImportDetailId(importDetail.getImportDetailId());
+//                    importResponse.setQuantity(importDetail.getQuantity());
+//                    importResponse.setPrice(importDetail.getPrice());
+//                    importResponse.setProductName(importDetail.getProduct().getProductName());
+//                    importResponse.setStoreName(store.get().getStoreName());
+//                    importResponse.setCreatedAt(importDetail.getCreatedAt());
+//                    importResponse.setPriceTotal(importDetail.getPriceTotal());
+//                    return importResponse;
+//                }
+//        ).collect(Collectors.toList());
+//        return ResponseEntity.status(HttpStatus.OK).body(
+//                new ResponseObject("OK", "Thành công.", importResponses)
+//        );
+//    }
 
-    @GetMapping(value = "/import/{storeid}/{productname}")
-    ResponseEntity<ResponseObject> GetAllImport(@PathVariable int storeid,
-                                                @PathVariable String productname) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        Optional<Store> store = storeService.findStoreById(storeid);
-        Optional<Product> product = productRepo.findByName(storeid, productname);
-
-        if (store.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("OK", "Không có cửa hàng này.", "")
-            );
-        }
-        if (!email.equals(store.get().getEmailmanager())) {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponseObject("OK", "Không phải cửa hàng của m.", "")
-            );
-        }
-        if (product.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ResponseObject("OK", "Không có sản phẩm này.", "")
-            );
-        }
-        List<ImportResponse> importResponses = importDetailDetailService.findByStoreandProduct(storeid, productname).stream().map(
-                importDetail -> {
-                    ImportResponse importResponse = new ImportResponse();
-                    importResponse.setImportDetailId(importDetail.getImportDetailId());
-                    importResponse.setQuantity(importDetail.getQuantity());
-                    importResponse.setPrice(importDetail.getPrice());
-                    importResponse.setProductName(importDetail.getProduct().getProductName());
-                    importResponse.setStoreName(store.get().getStoreName());
-                    importResponse.setCreatedAt(importDetail.getCreatedAt());
-                    importResponse.setPriceTotal(importDetail.getPriceTotal());
-                    return importResponse;
-                }
-        ).collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseObject("OK", "Thành công.", importResponses)
-        );
-    }
-
-    @PostMapping(value = "/import/{storeid}/insert")
+    @PostMapping(value = "/management/{storeid}/import/insert")
     ResponseEntity<ResponseObject> importInsert(@RequestParam String productname,
                                                 @RequestParam int priceIn,
                                                 @RequestParam(required = false) Integer priceOut,

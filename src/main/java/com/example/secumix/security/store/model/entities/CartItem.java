@@ -3,6 +3,7 @@ package com.example.secumix.security.store.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -34,12 +35,12 @@ public class CartItem {
     private int pricetotal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "cartid", foreignKey = @ForeignKey(name = "fk_cartitem_cart"))
     private Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "productid", foreignKey = @ForeignKey(name = "fk_cartitem_product"))
     private Product product;
 

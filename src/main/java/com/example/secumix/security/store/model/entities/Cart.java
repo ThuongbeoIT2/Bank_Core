@@ -4,6 +4,7 @@ package com.example.secumix.security.store.model.entities;
 import com.example.secumix.security.user.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class Cart {
     private User user;
 
     @OneToMany(mappedBy = "cart")
-    @JsonManagedReference
+    @JsonIgnore
     private Set<CartItem> cartItems;
 
 }

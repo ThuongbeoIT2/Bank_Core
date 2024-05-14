@@ -3,12 +3,18 @@ package com.example.secumix.security.user;
 
 
 import com.example.secumix.security.notify.Notify;
+import com.example.secumix.security.store.model.entities.OrderDetail;
+import com.example.secumix.security.store.model.entities.Store;
 import com.example.secumix.security.token.Token;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,13 +22,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
+
 public class User implements UserDetails {
 
   @Id
@@ -44,10 +53,22 @@ public class User implements UserDetails {
   @Column(name = "online_status")
   private boolean onlineStatus=false;
 
+  @JsonIgnore
   @OneToMany(mappedBy = "user")
   private List<Notify> notifies;
+
+  @JsonIgnore
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "user")
+  private List<OrderDetail> orderDetails;
+
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
+  private Set<Store> stores = new HashSet<>();
+
 
   public User() {
 

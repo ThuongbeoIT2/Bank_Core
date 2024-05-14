@@ -6,7 +6,7 @@ import com.example.secumix.security.store.model.entities.OrderDetail;
 import com.example.secumix.security.store.model.entities.Product;
 import com.example.secumix.security.store.model.request.OrderDetailRequest;
 import com.example.secumix.security.store.services.ICartItemService;
-import com.example.secumix.security.store.services.IOrderService;
+import com.example.secumix.security.store.services.IOrderDetailService;
 import com.example.secumix.security.store.repository.OrderDetailRepo;
 import com.example.secumix.security.store.repository.ProductRepo;
 import com.example.secumix.security.user.Permission;
@@ -27,7 +27,7 @@ import java.util.Optional;
 @RequestMapping(value = "/api/v1")
 public class OrderController {
     @Autowired
-    private IOrderService orderService;
+    private IOrderDetailService orderService;
     @Autowired
     private ProductRepo productRepo;
     @Autowired
@@ -82,6 +82,8 @@ public class OrderController {
                 new ResponseObject("OK","Đặt hàng thành công","")
         );
     }
+
+
     @PostMapping(value = "/customer/order/insert/{cartitemid}")
     ResponseEntity<ResponseObject> InsertIDR(@PathVariable int cartitemid){
         Optional<CartItem> cartItem = cartItemService.findByIdandUser(cartitemid);

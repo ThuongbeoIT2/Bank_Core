@@ -139,7 +139,7 @@ public class ProductController {
 //
 //    }
 
-    @PostMapping(value = "/management/product/{storeid}/insert")
+    @PostMapping(value = "/management/{storeid}/product/insert")
     ResponseEntity<ResponseObject> insertProduct(@RequestParam(required = false) MultipartFile avatar,
                                                  @RequestParam String name,
                                                  @RequestParam String description,

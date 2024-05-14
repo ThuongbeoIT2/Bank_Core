@@ -2,6 +2,7 @@ package com.example.secumix.security.store.model.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -35,11 +36,13 @@ public class ProductType {
     @Column(name = "updated_at")
     private Date updatedAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "productType")
     @JsonManagedReference
     private Set<Product> products;
+
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name = "storeid",foreignKey = @ForeignKey(name = "fk_store_producttype"))
     private Store store;
 

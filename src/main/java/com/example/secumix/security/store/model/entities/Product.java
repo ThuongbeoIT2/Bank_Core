@@ -4,6 +4,7 @@ package com.example.secumix.security.store.model.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -53,19 +54,28 @@ public class Product {
     @Column(name = "view")
     private int view;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "storeid", foreignKey = @ForeignKey(name = "fk_product_store"))
     private Store store;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producttypeid", foreignKey = @ForeignKey(name = "fk_product_producttype"))
     private ProductType productType;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     @JsonManagedReference
     private Set<ProductImage> productImages;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private Set<OrderDetail> orderDetails;
+
+    @JsonIgnore
     @OneToMany
     @JsonManagedReference
     private Set<ImportDetail> importDetails;
